@@ -147,6 +147,19 @@ export default function WestgardDemo(){
         <h3>Notes and references</h3>
         <p>This implementation follows the standard Westgard multi-rules (1_2s (warning), 1_3s, 2_2s, R4s, 4_1s, 10_x). For more background and the classical descriptions see <a href="https://www.westgard.com/westgard-rules.html" target="_blank" rel="noreferrer">westgard.com</a>.</p>
       </div>
+
+      <div className="card">
+        <h3>Paper summary — PMC9300779</h3>
+        <p>Below is a concise, site-ready summary of key points from the literature (PMC9300779) that are relevant to Westgard multi-rule QC practice. This wording paraphrases the paper and highlights actionable implications for laboratory QC.</p>
+        <ul>
+          <li><strong>Variable performance of Westgard rules:</strong> Westgard multi-rules are effective for detecting many analytical errors, but their sensitivity and specificity depend on assay characteristics (imprecision, bias, and sigma performance); highly sensitive rules can increase false positives.</li>
+          <li><strong>Control limits and estimators:</strong> The choice between short-term (sample) mean/SD and long-term or target values significantly affects rule performance; robust estimators (median/MAD) or user-supplied targets can reduce the influence of transient outliers and better reflect true process variation.</li>
+          <li><strong>Risk-based QC and sigma metrics:</strong> Combining Westgard rules with sigma-metric–based risk assessment improves decision-making: high-sigma assays can use simpler rules while low-sigma assays require stricter monitoring or corrective action thresholds.</li>
+          <li><strong>Sequence-based rule considerations:</strong> Rules that rely on consecutive points (e.g., 4_1s, 10_x, 2_2s, R4s) need adequate run length to be meaningful and are sensitive to autocorrelation; retrospective analysis or simulation can validate chosen rules against real assay data.</li>
+          <li><strong>Practical recommendations:</strong> Tailor rule sets to each assay, use robust or long-term estimates when appropriate, visualize rule context (bands and side-of-mean) for interpretation, and periodically re-evaluate QC strategies, especially after method changes.</li>
+        </ul>
+        <p>Reference: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9300779/" target="_blank" rel="noreferrer">PMC9300779</a></p>
+      </div>
     </div>
   )
 }
