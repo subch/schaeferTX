@@ -23,7 +23,7 @@ export default function WestgardDemo(){
   },[])
 
   function onFile(file){
-    Papa.parse(file, { header: true, dynamicTyping: true, skipEmptyLines: true, complete: ({data, meta})=>{
+    Papa.parse(file, { header: true, dynamicTyping: true, skipEmptyLines: true, comments: '#', complete: ({data, meta})=>{
       if (!data || data.length === 0){ alert('No rows parsed'); return }
       setRows(data)
       const keys = Object.keys(data[0])
@@ -92,12 +92,11 @@ export default function WestgardDemo(){
 
   return (
     <div>
-      <h2>Westgard rule explainer & demo</h2>
       <div className="card">
-        <div style={{display:'flex',gap:12,alignItems:'center',marginBottom:12}}>
+        <div className="westgard-controls">
           <input type="file" accept=".csv,text/csv" onChange={e=> e.target.files[0] && onFile(e.target.files[0])} />
-          <div style={{color:'var(--muted)'}}>Upload a CSV with a numeric column (header OK). First numeric column will be suggested.</div>
-          <button onClick={()=>{ // load example CSV via fetch from repository raw URL
+          <span className="hint">Upload a CSV with a numeric column (header OK). First numeric column will be suggested.</span>
+          <button className="btn btn-ghost" onClick={()=>{ // load example CSV via fetch from repository raw URL
             fetch('/examples/na_spikes.csv').then(r=>r.text()).then(t=>{
               const file = new File([t],'na_spikes.csv',{type:'text/csv'})
               onFile(file)
@@ -106,39 +105,41 @@ export default function WestgardDemo(){
         </div>
 
         {columns.length>0 && (
-          <div style={{marginBottom:12}}>
-            <label style={{color:'var(--muted)'}}>Select column:</label>
-            <select value={selectedCol||''} onChange={e=>{ setSelectedCol(e.target.value); runAnalysis(e.target.value) }}>
+          <div className="field-row">
+            <label className="hint" htmlFor="col-select">Column:</label>
+            <select id="col-select" value={selectedCol||''} onChange={e=>{ setSelectedCol(e.target.value); runAnalysis(e.target.value) }}>
               {columns.map(c=> <option key={c} value={c}>{c}</option>)}
             </select>
-            <button style={{marginLeft:8}} onClick={()=>runAnalysis(selectedCol)}>Analyze</button>
-            <button style={{marginLeft:8}} onClick={exportAnnotated}>Export Annotated CSV</button>
+            <button className="btn btn-primary" onClick={()=>runAnalysis(selectedCol)}>Analyze</button>
+            <button className="btn btn-ghost" onClick={exportAnnotated}>Export Annotated CSV</button>
           </div>
         )}
 
-        <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+        <div className="rules-row">
           {Object.keys(enabledRules).map(r=> (
-            <label key={r} style={{display:'inline-flex',alignItems:'center',gap:8}}>
+            <label key={r} className="rule-toggle">
               <input type="checkbox" checked={enabledRules[r]} onChange={()=>toggleRule(r)} /> {r}
             </label>
           ))}
         </div>
 
-        <div className="chart-wrap" style={{marginTop:12}}>
+        <div className="chart-wrap">
           <canvas ref={canvasRef} />
         </div>
 
         {summary && (
-          <div style={{marginTop:12}}>
-            <strong>Summary:</strong>
-            <div>Count: {summary.n} | Mean: {Number(summary.mean).toFixed(3)} | SD: {Number(summary.sd).toFixed(3)}</div>
-            <div style={{marginTop:8}}>
-              <strong>Violations:</strong>
-              <ul>
-                {summary && Object.entries(summary.counts).length===0 && <li>None detected</li>}
-                {summary && Object.entries(summary.counts).map(([rule,c])=> <li key={rule}>{rule}: {c}</li>)}
-              </ul>
+          <div>
+            <div className="summary-grid">
+              <div className="stat-tile"><strong>{summary.n}</strong><span>Count</span></div>
+              <div className="stat-tile"><strong>{Number(summary.mean).toFixed(3)}</strong><span>Mean</span></div>
+              <div className="stat-tile"><strong>{Number(summary.sd).toFixed(3)}</strong><span>SD</span></div>
             </div>
+            <ul className="violations-list">
+              {Object.entries(summary.counts).length===0 && <li>No violations detected <span className="badge none">clean</span></li>}
+              {Object.entries(summary.counts).map(([rule,c])=> (
+                <li key={rule}>{rule} <span className="badge">{c}</span></li>
+              ))}
+            </ul>
           </div>
         )}
       </div>
