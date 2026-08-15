@@ -47,7 +47,18 @@ export default function WestgardDemo(){
     const labels = values.map((_,i)=>i+1)
     const pointBg = points.map(p=> p.rules.some(r=> r.severity==='reject') ? 'rgba(255,82,82,1)' : p.rules.some(r=> r.severity==='warning') ? 'rgba(255,195,0,1)' : 'rgba(99,255,200,0.9)')
 
-    const data = { labels, datasets: [{ label: 'QC value', data: values, borderColor: 'rgba(111,184,255,0.9)', backgroundColor: 'rgba(111,184,255,0.12)', pointBackgroundColor: pointBg, pointRadius: 4, tension:0.2 }] }
+    const data = {
+      labels,
+      datasets: [{
+        label: 'QC value',
+        data: values,
+        borderColor: 'rgba(111,184,255,0.9)',
+        backgroundColor: 'rgba(111,184,255,0.12)',
+        pointBackgroundColor: pointBg,
+        tension: 0.2,
+        pointRadius: 4
+      }]
+    }
 
     // add sd bands
     const m = summary.mean
