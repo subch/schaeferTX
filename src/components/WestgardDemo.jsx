@@ -8,6 +8,10 @@ export default function WestgardDemo(){
   const canvasRef = useRef(null)
   const chartRef = useRef(null)
   const [summary, setSummary] = useState(null)
+  const [columns, setColumns] = useState([])
+  const [selectedCol, setSelectedCol] = useState(null)
+  const [rows, setRows] = useState([])
+  const [enabledRules, setEnabledRules] = useState({ '1_2s': true, '1_3s': true, '2_2s': true, 'R4s': true, '4_1s': true, '10_x': true })
 
   useEffect(()=>{
     return ()=>{
@@ -18,129 +22,110 @@ export default function WestgardDemo(){
     }
   },[])
 
-  function parseFile(file){
-    Papa.parse(file, {
-      header: true,
-      dynamicTyping: true,
-      skipEmptyLines: true,
-      complete: ({data}) => {
-        if (!data || data.length === 0){
-          alert('No rows parsed')
-          return
-        }
-        // find first numeric column
-        const keys = Object.keys(data[0])
-        let col = null
-        for (const k of keys){
-          if (data.some(r=>typeof r[k] === 'number')){ col = k; break }
-        }
-        if (!col){
-          alert('No numeric column found')
-          return
-        }
-        const values = data.map(r=>Number(r[col])).filter(v=>!Number.isNaN(v))
-        renderChart(values)
-      }
-    })
+  function onFile(file){
+    Papa.parse(file, { header: true, dynamicTyping: true, skipEmptyLines: true, complete: ({data, meta})=>{
+      if (!data || data.length === 0){ alert('No rows parsed'); return }
+      setRows(data)
+      const keys = Object.keys(data[0])
+      setColumns(keys)
+      // pick first numeric column if present
+      let col = null
+      for (const k of keys){ if (data.some(r=> typeof r[k] === 'number')){ col = k; break } }
+      setSelectedCol(col || keys[0])
+    }})
   }
 
-  function renderChart(values){
-    const m = mean(values)
-    const s = sd(values)
-    const violations = evaluateWestgard(values)
-    setSummary({n: values.length, mean: m, sd: s, violations})
+  function runAnalysis(col){
+    if (!col) return
+    const values = rows.map(r=>Number(r[col])).filter(v=>!Number.isNaN(v))
+    const res = evaluateWestgard(values, { enabledRules })
+    setSummary(res.summary)
+    renderChart(values, res.points, res.summary)
+  }
 
+  function renderChart(values, points, summary){
     const labels = values.map((_,i)=>i+1)
-    const pointBackground = values.map((v,i)=> violations.find(x=>x.index===i) ? (violations.find(x=>x.index===i).severity==='reject' ? 'rgba(255,82,82,1)' : 'rgba(255,195,0,1)') : 'rgba(99,255,200,0.9)')
+    const pointBg = points.map(p=> p.rules.some(r=> r.severity==='reject') ? 'rgba(255,82,82,1)' : p.rules.some(r=> r.severity==='warning') ? 'rgba(255,195,0,1)' : 'rgba(99,255,200,0.9)')
 
-    const data = {
-      labels,
-      datasets: [{
-        label: 'QC value',
-        data: values,
-        borderColor: 'rgba(111,184,255,0.9)',
-        backgroundColor: 'rgba(111,184,255,0.2)',
-        pointBackgroundColor: pointBackground,
-        tension: 0.2,
-        pointRadius: 4
-      }]
-    }
+    const data = { labels, datasets: [{ label: 'QC value', data: values, borderColor: 'rgba(111,184,255,0.9)', backgroundColor: 'rgba(111,184,255,0.12)', pointBackgroundColor: pointBg, pointRadius: 4, tension:0.2 }] }
 
+    // add sd bands
+    const m = summary.mean
+    const s = summary.computedSd
     const bands = [1,2,3]
-    const plugins = []
 
-    const config = {
-      type: 'line',
-      data,
-      options: {
-        responsive: true,
-        interaction: {mode: 'index', intersect: false},
-        scales: { y: { beginAtZero: false } },
-        plugins: {
-          legend: { display: false }
-        }
-      }
-    }
+    bands.forEach((k, idx)=>{
+      data.datasets.push({ label:`+${k}SD`, data: labels.map(()=> m + k*s), pointRadius:0, borderColor: idx===0 ? 'rgba(93,212,184,0.25)' : 'rgba(111,184,255,0.18)', borderDash:[6,4], tension:0 })
+      data.datasets.push({ label:`-${k}SD`, data: labels.map(()=> m - k*s), pointRadius:0, borderColor: idx===0 ? 'rgba(93,212,184,0.25)' : 'rgba(111,184,255,0.18)', borderDash:[6,4], tension:0 })
+    })
+
+    const config = { type:'line', data, options:{ responsive:true, interaction:{mode:'index',intersect:false}, scales:{ y:{ beginAtZero:false }}, plugins:{ legend:{ display:false } } } }
 
     if (chartRef.current){ chartRef.current.destroy(); chartRef.current = null }
     chartRef.current = new Chart(canvasRef.current.getContext('2d'), config)
+    chartRef.current.update()
+  }
 
-    // draw horizontal bands for mean +-1/2/3 sd using chart API
-    const ctx = canvasRef.current.getContext('2d')
-    const chart = chartRef.current
-    chart.options.animation = false
-    chart.update()
+  function toggleRule(rule){ setEnabledRules(prev=> ({...prev, [rule]: !prev[rule]})) }
 
-    // We will add horizontal lines as additional datasets (transparent)
-    bands.forEach((k, idx)=>{
-      chart.data.datasets.push({
-        label: `±${k}SD`,
-        data: labels.map(()=> m + k*s),
-        fill: false,
-        borderColor: idx===0 ? 'rgba(93,212,184,0.25)' : idx===1 ? 'rgba(111,184,255,0.18)' : 'rgba(111,184,255,0.12)',
-        borderDash: [6,4],
-        pointRadius: 0,
-        tension: 0
-      })
-      chart.data.datasets.push({
-        label: `±${k}SD lower`,
-        data: labels.map(()=> m - k*s),
-        fill: false,
-        borderColor: idx===0 ? 'rgba(93,212,184,0.25)' : idx===1 ? 'rgba(111,184,255,0.18)' : 'rgba(111,184,255,0.12)',
-        borderDash: [6,4],
-        pointRadius: 0,
-        tension: 0
-      })
-    })
-    chart.update()
+  function exportAnnotated(){
+    if (!rows || rows.length===0 || !selectedCol) return
+    const values = rows.map(r=>Number(r[selectedCol])).filter(v=>!Number.isNaN(v))
+    const res = evaluateWestgard(values, { enabledRules })
+    const annotated = rows.map((r,i)=> ({...r, __qc_value: r[selectedCol], __violations: (res.points[i] && res.points[i].rules.map(x=>x.name).join('|'))||'' }))
+    const csv = Papa.unparse(annotated)
+    const blob = new Blob([csv], {type:'text/csv'})
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a'); a.href = url; a.download = 'annotated.csv'; a.click(); URL.revokeObjectURL(url)
   }
 
   return (
     <div>
       <h2>Westgard rule explainer & demo</h2>
       <div className="card">
-        <div className="westgard-controls">
-          <input type="file" accept=".csv,text/csv" onChange={e=>{ if (e.target.files[0]) parseFile(e.target.files[0]) }} />
-          <div style={{color:'var(--muted)'}}>Upload a CSV with a numeric column (header OK). First numeric column will be used.</div>
+        <div style={{display:'flex',gap:12,alignItems:'center',marginBottom:12}}>
+          <input type="file" accept=".csv,text/csv" onChange={e=> e.target.files[0] && onFile(e.target.files[0])} />
+          <div style={{color:'var(--muted)'}}>Upload a CSV with a numeric column (header OK). First numeric column will be suggested.</div>
+          <button onClick={()=>{ // load example CSV via fetch from repository raw URL
+            fetch('/examples/na_spikes.csv').then(r=>r.text()).then(t=>{
+              const file = new File([t],'na_spikes.csv',{type:'text/csv'})
+              onFile(file)
+            })
+          }}>Load example (Na+ spikes)</button>
         </div>
 
-        <div className="chart-wrap">
+        {columns.length>0 && (
+          <div style={{marginBottom:12}}>
+            <label style={{color:'var(--muted)'}}>Select column:</label>
+            <select value={selectedCol||''} onChange={e=>{ setSelectedCol(e.target.value); runAnalysis(e.target.value) }}>
+              {columns.map(c=> <option key={c} value={c}>{c}</option>)}
+            </select>
+            <button style={{marginLeft:8}} onClick={()=>runAnalysis(selectedCol)}>Analyze</button>
+            <button style={{marginLeft:8}} onClick={exportAnnotated}>Export Annotated CSV</button>
+          </div>
+        )}
+
+        <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+          {Object.keys(enabledRules).map(r=> (
+            <label key={r} style={{display:'inline-flex',alignItems:'center',gap:8}}>
+              <input type="checkbox" checked={enabledRules[r]} onChange={()=>toggleRule(r)} /> {r}
+            </label>
+          ))}
+        </div>
+
+        <div className="chart-wrap" style={{marginTop:12}}>
           <canvas ref={canvasRef} />
         </div>
 
         {summary && (
           <div style={{marginTop:12}}>
             <strong>Summary:</strong>
-            <div>Count: {summary.n} | Mean: {summary.mean.toFixed(3)} | SD: {summary.sd.toFixed(3)}</div>
-            <div className="legend">
-              <div className="item"><span className="swatch" style={{background:'rgba(255,82,82,1)'}}></span> Reject</div>
-              <div className="item"><span className="swatch" style={{background:'rgba(255,195,0,1)'}}></span> Warning</div>
-              <div className="item"><span className="swatch" style={{background:'rgba(99,255,200,0.9)'}}></span> OK</div>
-            </div>
+            <div>Count: {summary.n} | Mean: {Number(summary.mean).toFixed(3)} | SD: {Number(summary.sd).toFixed(3)}</div>
             <div style={{marginTop:8}}>
               <strong>Violations:</strong>
               <ul>
-                {summary.violations.map((v,i)=> <li key={i}>Index {v.index+1}: {v.rule} ({v.severity})</li>)}
+                {summary && Object.entries(summary.counts).length===0 && <li>None detected</li>}
+                {summary && Object.entries(summary.counts).map(([rule,c])=> <li key={rule}>{rule}: {c}</li>)}
               </ul>
             </div>
           </div>
@@ -148,8 +133,8 @@ export default function WestgardDemo(){
       </div>
 
       <div className="card">
-        <h3>How it works</h3>
-        <p>This demo computes the mean and sample standard deviation of the uploaded QC series and evaluates common Westgard rules. Files are parsed in your browser and are not uploaded to any server.</p>
+        <h3>Notes and references</h3>
+        <p>This implementation follows the standard Westgard multi-rules (1_2s (warning), 1_3s, 2_2s, R4s, 4_1s, 10_x). For more background and the classical descriptions see <a href="https://www.westgard.com/westgard-rules.html" target="_blank" rel="noreferrer">westgard.com</a>.</p>
       </div>
     </div>
   )
