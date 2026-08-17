@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import WestgardDemo from './components/WestgardDemo'
+import LeveyJenningsDemo from './components/LeveyJenningsDemo'
 
 const NAV_ITEMS = [
   { id: 'home', label: 'Home' },
   { id: 'projects', label: 'Projects' },
   { id: 'westgard', label: 'Westgard Demo' },
+  { id: 'levey-jennings', label: 'Levey-Jennings Demo' },
   { id: 'about', label: 'About' },
 ]
 
@@ -152,6 +154,24 @@ export default function App() {
                   <button className="btn btn-ghost" onClick={() => goto('westgard')}>Open demo →</button>
                 </div>
               </div>
+
+              <div className="card project-card">
+                <div className="icon">📈</div>
+                <h3>Levey-Jennings chart demo</h3>
+                <p>
+                  Multi-level Levey-Jennings charting with target mean/SD overrides and a monthly
+                  PDF report — chart snapshots, flagged points, and a review &amp; approval page for
+                  lab director sign-off.
+                </p>
+                <div className="tag-row">
+                  <span className="tag">React</span>
+                  <span className="tag">Chart.js</span>
+                  <span className="tag">PDF export</span>
+                </div>
+                <div>
+                  <button className="btn btn-ghost" onClick={() => goto('levey-jennings')}>Open demo →</button>
+                </div>
+              </div>
             </div>
           </section>
         )}
@@ -165,7 +185,20 @@ export default function App() {
               </div>
               <button className="btn btn-ghost" onClick={() => goto('projects')}>← All projects</button>
             </div>
-            <WestgardDemo />
+            <WestgardDemo onNavigate={goto} />
+          </section>
+        )}
+
+        {page === 'levey-jennings' && (
+          <section className="page-section container">
+            <div className="demo-header">
+              <div>
+                <span className="eyebrow">Interactive demo</span>
+                <h2 style={{ margin: 0 }}>Levey-Jennings chart demo</h2>
+              </div>
+              <button className="btn btn-ghost" onClick={() => goto('projects')}>← All projects</button>
+            </div>
+            <LeveyJenningsDemo onNavigate={goto} />
           </section>
         )}
 

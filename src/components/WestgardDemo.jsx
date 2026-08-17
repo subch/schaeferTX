@@ -2,11 +2,19 @@ import React, {useRef, useEffect, useState} from 'react'
 import Papa from 'papaparse'
 import { Chart, registerables } from 'chart.js'
 import { mean, sd, evaluateWestgard } from '../westgard'
+import { detectValueColumns, NON_VALUE_COLUMN } from '../dataUtils'
+import DataTemplateCard from './DataTemplateCard'
 Chart.register(...registerables)
 
-// Columns that look like a row index/timestamp rather than QC data, so the
-// column auto-picker skips them in favor of an actual measured value.
-const NON_VALUE_COLUMN = /^(time|date|index|idx|id|sample|run|seq|point|obs)$/i
+const TEMPLATE_COLUMNS = [
+  { key: 'Time', label: 'Time', type: 'index', desc: 'Row order / run number. Any column named Time, Date, Index, ID, Sample, Run, Seq, Point, or Obs is auto-detected and excluded from the value picker.' },
+  { key: 'Value', label: 'Value', type: 'numeric', desc: 'The QC result for that run. The first numeric column that isn’t an index column is auto-selected, and any other column can be picked from the dropdown once loaded.' },
+]
+const TEMPLATE_ROWS = [
+  { Time: 1, Value: 95 },
+  { Time: 2, Value: 97 },
+  { Time: 3, Value: 94 },
+]
 
 const EXAMPLES = [
   { key: 'sodium', label: 'Sodium (Na+)', file: 'sodium.csv', hint: 'electrolyte spikes → 1_2s, 2_2s' },
@@ -27,7 +35,7 @@ const RULE_INFO = {
   '10_x': { severity: 'reject', short: 'ten points on the same side', description: 'Ten consecutive control results fall on the same side of the mean, regardless of magnitude. Signals a persistent bias, such as a reagent lot change or calibration drift. Reject the run.' },
 }
 
-export default function WestgardDemo(){
+export default function WestgardDemo({ onNavigate }){
   const canvasRef = useRef(null)
   const chartRef = useRef(null)
   const [summary, setSummary] = useState(null)
@@ -204,8 +212,22 @@ export default function WestgardDemo(){
           ))}
         </div>
 
-        <p>For the classical descriptions and background, see <a href="https://www.westgard.com/westgard-rules.html" target="_blank" rel="noreferrer">westgard.com</a>.</p>
+        <p>
+          For the classical descriptions and background, see <a href="https://www.westgard.com/westgard-rules.html" target="_blank" rel="noreferrer">westgard.com</a>.
+          These rules are applied on top of a Levey-Jennings chart — the mean/SD run chart itself — see the{' '}
+          {onNavigate
+            ? <a href="#" onClick={e => { e.preventDefault(); onNavigate('levey-jennings') }}>Levey-Jennings demo</a>
+            : <span>Levey-Jennings demo</span>} for a monthly, multi-level view with a PDF export.
+        </p>
       </div>
+
+      <DataTemplateCard
+        title="Input data template"
+        description="Any CSV with a numeric result column works. Shape it like this — one row per run, in order:"
+        columns={TEMPLATE_COLUMNS}
+        sampleRows={TEMPLATE_ROWS}
+        downloadFileName="westgard-template.csv"
+      />
 
       <div className="card">
         <h3>Paper summary — PMC9300779</h3>
