@@ -1,4 +1,5 @@
 import React, { useRef, useState, useMemo } from 'react'
+import { Link } from 'react-router-dom'
 import Papa from 'papaparse'
 import { mean, sd } from '../westgard'
 import { detectValueColumns, detectLabelColumn } from '../dataUtils'
@@ -6,10 +7,16 @@ import LevelChart from './LevelChart'
 import DataTemplateCard from './DataTemplateCard'
 
 const EXAMPLES = [
-  { key: 'glucose', label: 'Glucose (2 levels)', file: 'lj-glucose.csv', hint: 'stable, in-control month' },
-  { key: 'electrolytes', label: 'Sodium (2 levels)', file: 'lj-electrolytes.csv', hint: 'Level 2 drifting upward' },
-  { key: 'lipids', label: 'Cholesterol (2 levels)', file: 'lj-lipids.csv', hint: 'Level 1 single outlier' },
+  { key: 'glucose', label: 'Glucose', file: 'lj-glucose.csv', hint: '2 levels, stable in-control month' },
+  { key: 'electrolytes', label: 'Sodium', file: 'lj-electrolytes.csv', hint: '2 levels, Level 2 drifting upward' },
+  { key: 'lipids', label: 'Cholesterol', file: 'lj-lipids.csv', hint: '2 levels, Level 1 single outlier' },
+  { key: 'creatinine', label: 'Creatinine', file: 'lj-creatinine.csv', hint: '2 levels, Level 2 single outlier' },
+  { key: 'hemoglobin', label: 'Hemoglobin', file: 'lj-hemoglobin.csv', hint: '2 levels, Level 1 gradual drift' },
 ]
+
+const KEY_SEP = '::'
+const compositeKey = (datasetId, col) => `${datasetId}${KEY_SEP}${col}`
+const splitKey = (key) => { const i = key.indexOf(KEY_SEP); return [key.slice(0, i), key.slice(i + KEY_SEP.length)] }
 
 const TEMPLATE_COLUMNS = [
   { key: 'Date', label: 'Date', type: 'date/index', desc: 'One run per row, in order. A Date/Time/Run/Index column is auto-detected and used for the x-axis, or omitted for a plain run number.' },
@@ -22,63 +29,77 @@ const TEMPLATE_ROWS = [
   { Date: '2026-01-03', Level1_Low: 70.1, Level2_High: 264.7 },
 ]
 
-export default function LeveyJenningsDemo({ onNavigate }) {
-  const [rows, setRows] = useState([])
-  const [columns, setColumns] = useState([])
-  const [labelColumn, setLabelColumn] = useState(null)
-  const [selectedLevels, setSelectedLevels] = useState([])
-  const [overrides, setOverrides] = useState({})
+export default function LeveyJenningsDemo() {
+  const [datasets, setDatasets] = useState([]) // [{id, name, rows, columns, labelColumn}]
+  const [selectedLevels, setSelectedLevels] = useState([]) // composite keys
+  const [overrides, setOverrides] = useState({}) // keyed by composite key
   const [loadError, setLoadError] = useState(null)
-  const [datasetName, setDatasetName] = useState(null)
   const [exporting, setExporting] = useState(false)
   const canvasRefs = useRef({})
 
-  function onFile(file, name) {
-    setLoadError(null)
-    Papa.parse(file, {
-      header: true, dynamicTyping: true, skipEmptyLines: true, comments: '#',
-      complete: ({ data }) => {
-        if (!data || data.length === 0) { alert('No rows parsed'); return }
-        const keys = Object.keys(data[0])
-        const valueCols = detectValueColumns(keys, data)
-        if (valueCols.length === 0) { setLoadError('No numeric columns detected in this file.'); return }
-        setRows(data)
-        setColumns(valueCols)
-        setLabelColumn(detectLabelColumn(keys))
-        setSelectedLevels(valueCols)
-        setOverrides({})
-        setDatasetName(name)
-      },
+  function addDataset(id, name, data) {
+    if (!data || data.length === 0) { setLoadError('No rows parsed'); return }
+    const keys = Object.keys(data[0])
+    const valueCols = detectValueColumns(keys, data)
+    if (valueCols.length === 0) { setLoadError(`No numeric columns detected in ${name}.`); return }
+    const labelColumn = detectLabelColumn(keys)
+    setDatasets(prev => [...prev.filter(d => d.id !== id), { id, name, rows: data, columns: valueCols, labelColumn }])
+    setSelectedLevels(prev => [...prev, ...valueCols.map(c => compositeKey(id, c))])
+  }
+
+  function removeDataset(id) {
+    setDatasets(prev => prev.filter(d => d.id !== id))
+    setSelectedLevels(prev => prev.filter(k => splitKey(k)[0] !== id))
+    setOverrides(prev => {
+      const next = { ...prev }
+      Object.keys(next).forEach(k => { if (splitKey(k)[0] === id) delete next[k] })
+      return next
     })
   }
 
-  function loadExample(file, label) {
+  function onFile(file) {
     setLoadError(null)
-    fetch(`/examples/${file}`)
-      .then(r => { if (!r.ok) throw new Error(`${file} (${r.status})`); return r.text() })
-      .then(t => onFile(new File([t], file, { type: 'text/csv' }), label))
+    Papa.parse(file, {
+      header: true, dynamicTyping: true, skipEmptyLines: true, comments: '#',
+      complete: ({ data }) => addDataset(`upload-${Date.now()}`, file.name, data),
+    })
+  }
+
+  function toggleExample(ex) {
+    const isLoaded = datasets.some(d => d.id === ex.key)
+    if (isLoaded) { removeDataset(ex.key); return }
+    setLoadError(null)
+    fetch(`/examples/${ex.file}`)
+      .then(r => { if (!r.ok) throw new Error(`${ex.file} (${r.status})`); return r.text() })
+      .then(t => new Promise((resolve, reject) => {
+        Papa.parse(t, { header: true, dynamicTyping: true, skipEmptyLines: true, comments: '#', complete: resolve, error: reject })
+      }))
+      .then(({ data }) => addDataset(ex.key, ex.label, data))
       .catch(err => setLoadError(`Could not load example: ${err.message}`))
   }
 
-  function toggleLevel(col) {
-    setSelectedLevels(prev => prev.includes(col) ? prev.filter(c => c !== col) : [...prev, col])
+  function toggleLevel(key) {
+    setSelectedLevels(prev => prev.includes(key) ? prev.filter(k => k !== key) : [...prev, key])
   }
 
-  function setOverride(col, field, value) {
-    setOverrides(prev => ({ ...prev, [col]: { ...prev[col], [field]: value === '' ? null : Number(value) } }))
+  function setOverride(key, field, value) {
+    setOverrides(prev => ({ ...prev, [key]: { ...prev[key], [field]: value === '' ? null : Number(value) } }))
   }
 
-  function resetOverride(col) {
-    setOverrides(prev => { const next = { ...prev }; delete next[col]; return next })
+  function resetOverride(key) {
+    setOverrides(prev => { const next = { ...prev }; delete next[key]; return next })
   }
 
   const levelData = useMemo(() => {
-    return selectedLevels.map((col, i) => {
-      const values = rows.map(r => Number(r[col])).filter(v => !Number.isNaN(v))
-      const labels = labelColumn ? rows.map(r => r[labelColumn]) : values.map((_, idx) => idx + 1)
+    return selectedLevels.map((key, i) => {
+      const [datasetId, col] = splitKey(key)
+      const ds = datasets.find(d => d.id === datasetId)
+      if (!ds) return null
+      const values = ds.rows.map(r => Number(r[col])).filter(v => !Number.isNaN(v))
+      const labels = ds.labelColumn ? ds.rows.map(r => r[ds.labelColumn]) : values.map((_, idx) => idx + 1)
       const computedMean = mean(values)
       const computedSd = sd(values)
-      const ov = overrides[col] || {}
+      const ov = overrides[key] || {}
       const activeMean = ov.mean != null ? ov.mean : computedMean
       const activeSd = ov.sd != null ? ov.sd : computedSd
       const safeSd = (activeSd === 0 || Number.isNaN(activeSd)) ? Number.EPSILON : activeSd
@@ -91,7 +112,8 @@ export default function LeveyJenningsDemo({ onNavigate }) {
           sdFromMean: ((v - activeMean) / safeSd).toFixed(2),
         }))
       return {
-        col, colorIndex: i, values, labels,
+        key, datasetId, col, colorIndex: i, values, labels,
+        name: `${ds.name} — ${col}`,
         computedMean, computedSd, activeMean, activeSd,
         usingOverride: ov.mean != null || ov.sd != null,
         n: values.length,
@@ -100,22 +122,25 @@ export default function LeveyJenningsDemo({ onNavigate }) {
         max: values.length ? Math.max(...values).toFixed(3) : 'n/a',
         flagged,
       }
-    })
-  }, [rows, selectedLevels, overrides, labelColumn])
+    }).filter(Boolean)
+  }, [datasets, selectedLevels, overrides])
 
   async function exportPdf() {
     if (levelData.length === 0) return
     setExporting(true)
     try {
       const { buildMonthlyReportPdf } = await import('../pdfReport')
-      const period = labelColumn && rows.length
-        ? `${rows[0][labelColumn]} – ${rows[rows.length - 1][labelColumn]}`
-        : `Run 1 – ${rows.length}`
+      const period = datasets
+        .filter(ds => levelData.some(l => l.datasetId === ds.id))
+        .map(ds => {
+          const range = ds.labelColumn ? `${ds.rows[0][ds.labelColumn]} – ${ds.rows[ds.rows.length - 1][ds.labelColumn]}` : `Run 1 – ${ds.rows.length}`
+          return `${ds.name}: ${range}`
+        }).join('; ')
       const levels = levelData.map(l => {
-        const canvas = canvasRefs.current[l.col]
+        const canvas = canvasRefs.current[l.key]
         if (!canvas) return null
         return {
-          name: l.col,
+          name: l.name,
           canvas,
           stats: {
             n: l.n,
@@ -131,7 +156,7 @@ export default function LeveyJenningsDemo({ onNavigate }) {
       }).filter(Boolean)
 
       const doc = buildMonthlyReportPdf({
-        title: `Levey-Jennings Monthly QC Report${datasetName ? ` — ${datasetName}` : ''}`,
+        title: 'Levey-Jennings Monthly QC Report',
         period,
         levels,
       })
@@ -145,29 +170,34 @@ export default function LeveyJenningsDemo({ onNavigate }) {
     <div>
       <div className="card">
         <div className="westgard-controls">
-          <input type="file" accept=".csv,text/csv" onChange={e => e.target.files[0] && onFile(e.target.files[0], e.target.files[0].name)} />
-          <span className="hint">Upload a CSV — every numeric column becomes its own control-level chart.</span>
+          <input type="file" accept=".csv,text/csv" onChange={e => e.target.files[0] && onFile(e.target.files[0])} />
+          <span className="hint">Upload a CSV — adds to the analytes below rather than replacing them. Every numeric column becomes its own control-level chart.</span>
         </div>
 
         <div className="westgard-controls">
-          <span className="hint">Or load a dummy month of QC data:</span>
+          <span className="hint">Or select dummy analytes to compare (loads/unloads instantly):</span>
+        </div>
+        <div className="rules-row">
           {EXAMPLES.map(ex => (
-            <button key={ex.key} className="btn btn-ghost" title={ex.hint} onClick={() => loadExample(ex.file, ex.label)}>
-              {ex.label}
-            </button>
+            <label key={ex.key} className="rule-toggle" title={ex.hint}>
+              <input type="checkbox" checked={datasets.some(d => d.id === ex.key)} onChange={() => toggleExample(ex)} /> {ex.label}
+            </label>
           ))}
         </div>
 
         {loadError && <p className="hint" role="alert">{loadError}</p>}
 
-        {columns.length > 0 && (
+        {datasets.length > 0 && (
           <>
             <div className="rules-row">
-              {columns.map(col => (
-                <label key={col} className="rule-toggle">
-                  <input type="checkbox" checked={selectedLevels.includes(col)} onChange={() => toggleLevel(col)} /> {col}
-                </label>
-              ))}
+              {datasets.map(ds => ds.columns.map(col => {
+                const key = compositeKey(ds.id, col)
+                return (
+                  <label key={key} className="rule-toggle">
+                    <input type="checkbox" checked={selectedLevels.includes(key)} onChange={() => toggleLevel(key)} /> {ds.name} — {col}
+                  </label>
+                )
+              }))}
             </div>
             <div className="field-row">
               <button className="btn btn-primary" disabled={exporting || levelData.length === 0} onClick={exportPdf}>
@@ -180,11 +210,11 @@ export default function LeveyJenningsDemo({ onNavigate }) {
       </div>
 
       {levelData.map(l => (
-        <div className="card" key={l.col}>
+        <div className="card" key={l.key}>
           <div className="chart-wrap">
             <LevelChart
-              ref={el => { canvasRefs.current[l.col] = el }}
-              label={l.col}
+              ref={el => { canvasRefs.current[l.key] = el }}
+              label={l.name}
               labels={l.labels}
               values={l.values}
               mean={l.activeMean}
@@ -205,13 +235,13 @@ export default function LeveyJenningsDemo({ onNavigate }) {
           <details className="target-details">
             <summary>Set target mean / SD (optional — overrides computed values, as with an assigned control lot)</summary>
             <div className="field-row">
-              <label className="hint" htmlFor={`mean-${l.col}`}>Target mean</label>
-              <input id={`mean-${l.col}`} type="number" step="any" placeholder={l.computedMean.toFixed(3)}
-                value={overrides[l.col]?.mean ?? ''} onChange={e => setOverride(l.col, 'mean', e.target.value)} />
-              <label className="hint" htmlFor={`sd-${l.col}`}>Target SD</label>
-              <input id={`sd-${l.col}`} type="number" step="any" min="0" placeholder={l.computedSd.toFixed(3)}
-                value={overrides[l.col]?.sd ?? ''} onChange={e => setOverride(l.col, 'sd', e.target.value)} />
-              {l.usingOverride && <button className="btn btn-ghost" onClick={() => resetOverride(l.col)}>Reset to computed</button>}
+              <label className="hint" htmlFor={`mean-${l.key}`}>Target mean</label>
+              <input id={`mean-${l.key}`} type="number" step="any" placeholder={l.computedMean.toFixed(3)}
+                value={overrides[l.key]?.mean ?? ''} onChange={e => setOverride(l.key, 'mean', e.target.value)} />
+              <label className="hint" htmlFor={`sd-${l.key}`}>Target SD</label>
+              <input id={`sd-${l.key}`} type="number" step="any" min="0" placeholder={l.computedSd.toFixed(3)}
+                value={overrides[l.key]?.sd ?? ''} onChange={e => setOverride(l.key, 'sd', e.target.value)} />
+              {l.usingOverride && <button className="btn btn-ghost" onClick={() => resetOverride(l.key)}>Reset to computed</button>}
             </div>
           </details>
 
@@ -246,10 +276,7 @@ export default function LeveyJenningsDemo({ onNavigate }) {
           horizontal reference lines at ±1, ±2, and ±3 SD. It's the base visualization laboratories build on —
           Westgard multi-rules are then applied on top of it to decide whether a run should be accepted or
           rejected. Points beyond ±2 SD are flagged above for a quick look; for full multi-rule evaluation
-          (1_2s, 1_3s, 2_2s, R4s, 4_1s, 10_x), see the{' '}
-          {onNavigate
-            ? <a href="#" onClick={e => { e.preventDefault(); onNavigate('westgard') }}>Westgard rules demo</a>
-            : <span>Westgard rules demo</span>}.
+          (1_2s, 1_3s, 2_2s, R4s, 4_1s, 10_x), see the <Link to="/westgard">Westgard rules demo</Link>.
         </p>
       </div>
     </div>
