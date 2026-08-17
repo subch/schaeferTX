@@ -249,15 +249,34 @@ select{
 
 .violations-list{ list-style: none; display: grid; gap: 8px; margin-top: 12px }
 .violations-list li{
-  display: flex; align-items: center; justify-content: space-between;
+  display: flex; align-items: center; justify-content: space-between; gap: 12px;
   background: var(--bg-elevated); border: 1px solid var(--border-soft);
   padding: 10px 14px; border-radius: var(--radius-sm); font-size: 14px;
 }
+.violations-list .rule-code{ font-family: var(--font-mono); font-weight: 700; color: var(--text) }
+.violations-list .rule-desc{ display: block; color: var(--text-faint); font-size: 12.5px; margin-top: 2px }
 .badge{
-  font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+  font-family: var(--font-mono); font-size: 12px; font-weight: 700; flex: none;
   padding: 3px 9px; border-radius: 999px; background: rgba(255,107,107,0.14); color: var(--danger);
 }
 .badge.none{ background: rgba(102,224,196,0.14); color: var(--success) }
+.badge.warning{ background: rgba(255,200,74,0.15); color: var(--warning) }
+
+/* ---------- Rule reference grid ---------- */
+.severity-pill{
+  display: inline-block; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px;
+  padding: 2px 8px; border-radius: 999px; margin-left: 8px; vertical-align: middle;
+  background: rgba(255,107,107,0.14); color: var(--danger);
+}
+.severity-pill.warning{ background: rgba(255,200,74,0.15); color: var(--warning) }
+
+.rule-info-grid{ display: grid; grid-template-columns: repeat(auto-fit, minmax(240px,1fr)); gap: 12px; margin: 18px 0 }
+.rule-info-card{
+  background: var(--bg-elevated); border: 1px solid var(--border-soft); border-radius: var(--radius-sm);
+  padding: 14px 16px;
+}
+.rule-info-card .rule-code{ font-family: var(--font-mono); font-weight: 700; color: var(--text) }
+.rule-info-card p{ margin: 8px 0 0; font-size: 13px; color: var(--text-muted) }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 860px){
