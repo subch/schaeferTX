@@ -16,6 +16,17 @@ const EXAMPLES = [
   { key: 'calcium', label: 'Calcium', file: 'calcium.csv', hint: 'single outlier → 1_3s' },
 ]
 
+// What each rule flags and why it matters, shown as tooltips on the toggles
+// and as inline explanations wherever a violation is reported.
+const RULE_INFO = {
+  '1_2s': { severity: 'warning', short: 'one point beyond 2 SD', description: 'A single control result falls beyond the mean ± 2 SD. Common in an in-control run by chance alone, so it’s treated as a warning to check the stricter rules below rather than an automatic reject.' },
+  '1_3s': { severity: 'reject', short: 'one point beyond 3 SD', description: 'A single control result falls beyond the mean ± 3 SD — a clear outlier, usually from a random error (e.g. a sample mix-up or instrument glitch). Reject the run.' },
+  '2_2s': { severity: 'reject', short: 'two points beyond 2 SD, same side', description: 'Two consecutive control results both exceed the mean ± 2 SD on the same side. Suggests a systematic error, such as a calibration or reagent shift. Reject the run.' },
+  'R4s': { severity: 'reject', short: 'consecutive points spanning 4 SD', description: 'One control result exceeds +2 SD while the next (or previous) exceeds −2 SD — a swing of 4 SD between two points. Flags a sudden increase in random error. Reject the run.' },
+  '4_1s': { severity: 'reject', short: 'four points beyond 1 SD, same side', description: 'Four consecutive control results all fall beyond 1 SD on the same side of the mean. Indicates a developing systematic shift. Reject the run.' },
+  '10_x': { severity: 'reject', short: 'ten points on the same side', description: 'Ten consecutive control results fall on the same side of the mean, regardless of magnitude. Signals a persistent bias, such as a reagent lot change or calibration drift. Reject the run.' },
+}
+
 export default function WestgardDemo(){
   const canvasRef = useRef(null)
   const chartRef = useRef(null)
@@ -144,7 +155,7 @@ export default function WestgardDemo(){
 
         <div className="rules-row">
           {Object.keys(enabledRules).map(r=> (
-            <label key={r} className="rule-toggle">
+            <label key={r} className="rule-toggle" title={RULE_INFO[r].description}>
               <input type="checkbox" checked={enabledRules[r]} onChange={()=>toggleRule(r)} /> {r}
             </label>
           ))}
@@ -164,7 +175,13 @@ export default function WestgardDemo(){
             <ul className="violations-list">
               {Object.entries(summary.counts).length===0 && <li>No violations detected <span className="badge none">clean</span></li>}
               {Object.entries(summary.counts).map(([rule,c])=> (
-                <li key={rule}>{rule} <span className="badge">{c}</span></li>
+                <li key={rule} title={RULE_INFO[rule]?.description}>
+                  <div>
+                    <span className="rule-code">{rule}</span>
+                    <span className="rule-desc">{RULE_INFO[rule]?.short}</span>
+                  </div>
+                  <span className={`badge ${RULE_INFO[rule]?.severity==='warning' ? 'warning' : ''}`}>{c}</span>
+                </li>
               ))}
             </ul>
           </div>
@@ -172,20 +189,27 @@ export default function WestgardDemo(){
       </div>
 
       <div className="card">
-        <h3>Notes and references</h3>
-        <p>This implementation follows the standard Westgard multi-rules (1_2s (warning), 1_3s, 2_2s, R4s, 4_1s, 10_x). For more background and the classical descriptions see <a href="https://www.westgard.com/westgard-rules.html" target="_blank" rel="noreferrer">westgard.com</a>.</p>
+        <h3>What are Westgard rules?</h3>
+        <p>Westgard multi-rules are a set of statistical checks applied to laboratory quality-control (QC) results before a batch of patient results is released. Each rule looks for a different pattern in the QC data relative to its established mean and standard deviation (SD) — a single extreme value, a run drifting to one side, and so on. A <span className="severity-pill warning">warning</span> hit means "worth a second look"; a <span className="severity-pill reject">reject</span> hit means the run likely has a real analytical error and shouldn't be released until it's investigated.</p>
+
+        <div className="rule-info-grid">
+          {Object.entries(RULE_INFO).map(([code, info])=> (
+            <div key={code} className="rule-info-card">
+              <div>
+                <span className="rule-code">{code}</span>
+                <span className={`severity-pill ${info.severity}`}>{info.severity}</span>
+              </div>
+              <p>{info.description}</p>
+            </div>
+          ))}
+        </div>
+
+        <p>For the classical descriptions and background, see <a href="https://www.westgard.com/westgard-rules.html" target="_blank" rel="noreferrer">westgard.com</a>.</p>
       </div>
 
       <div className="card">
         <h3>Paper summary — PMC9300779</h3>
-        <p>Below is a concise, site-ready summary of key points from the literature (PMC9300779) that are relevant to Westgard multi-rule QC practice. This wording paraphrases the paper and highlights actionable implications for laboratory QC.</p>
-        <ul>
-          <li><strong>Variable performance of Westgard rules:</strong> Westgard multi-rules are effective for detecting many analytical errors, but their sensitivity and specificity depend on assay characteristics (imprecision, bias, and sigma performance); highly sensitive rules can increase false positives.</li>
-          <li><strong>Control limits and estimators:</strong> The choice between short-term (sample) mean/SD and long-term or target values significantly affects rule performance; robust estimators (median/MAD) or user-supplied targets can reduce the influence of transient outliers and better reflect true process variation.</li>
-          <li><strong>Risk-based QC and sigma metrics:</strong> Combining Westgard rules with sigma-metric–based risk assessment improves decision-making: high-sigma assays can use simpler rules while low-sigma assays require stricter monitoring or corrective action thresholds.</li>
-          <li><strong>Sequence-based rule considerations:</strong> Rules that rely on consecutive points (e.g., 4_1s, 10_x, 2_2s, R4s) need adequate run length to be meaningful and are sensitive to autocorrelation; retrospective analysis or simulation can validate chosen rules against real assay data.</li>
-          <li><strong>Practical recommendations:</strong> Tailor rule sets to each assay, use robust or long-term estimates when appropriate, visualize rule context (bands and side-of-mean) for interpretation, and periodically re-evaluate QC strategies, especially after method changes.</li>
-        </ul>
+        <p>Rule performance isn't one-size-fits-all: sensitivity and specificity vary with each assay's imprecision, bias, and sigma-metric performance, so a rule set tuned for one analyte can create excess false alarms for another. The recommended approach is to match rule sensitivity to an assay's sigma performance, prefer long-term or robust (median/MAD) control limits over short-term sample statistics when available, and pair multi-rule QC with sigma-metric, risk-based decision-making to balance error detection against false positives.</p>
         <p>Reference: <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC9300779/" target="_blank" rel="noreferrer">PMC9300779</a></p>
       </div>
     </div>
