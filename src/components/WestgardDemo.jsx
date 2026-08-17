@@ -4,6 +4,18 @@ import { Chart, registerables } from 'chart.js'
 import { mean, sd, evaluateWestgard } from '../westgard'
 Chart.register(...registerables)
 
+// Columns that look like a row index/timestamp rather than QC data, so the
+// column auto-picker skips them in favor of an actual measured value.
+const NON_VALUE_COLUMN = /^(time|date|index|idx|id|sample|run|seq|point|obs)$/i
+
+const EXAMPLES = [
+  { key: 'sodium', label: 'Sodium (Na+)', file: 'sodium.csv', hint: 'electrolyte spikes → 1_2s, 2_2s' },
+  { key: 'potassium', label: 'Potassium (K+)', file: 'potassium.csv', hint: 'reagent drift → 4_1s, 10_x' },
+  { key: 'lipids', label: 'Lipids (Cholesterol)', file: 'lipids.csv', hint: 'systematic shift → 10_x' },
+  { key: 'glucose', label: 'Glucose', file: 'glucose.csv', hint: 'in control → no violations' },
+  { key: 'calcium', label: 'Calcium', file: 'calcium.csv', hint: 'single outlier → 1_3s' },
+]
+
 export default function WestgardDemo(){
   const canvasRef = useRef(null)
   const chartRef = useRef(null)
@@ -12,6 +24,7 @@ export default function WestgardDemo(){
   const [selectedCol, setSelectedCol] = useState(null)
   const [rows, setRows] = useState([])
   const [enabledRules, setEnabledRules] = useState({ '1_2s': true, '1_3s': true, '2_2s': true, 'R4s': true, '4_1s': true, '10_x': true })
+  const [loadError, setLoadError] = useState(null)
 
   useEffect(()=>{
     return ()=>{
@@ -22,25 +35,35 @@ export default function WestgardDemo(){
     }
   },[])
 
+  // Re-run analysis whenever the parsed data, chosen column, or rule set changes.
+  useEffect(()=>{
+    if (!selectedCol || rows.length === 0){ setSummary(null); return }
+    const values = rows.map(r=>Number(r[selectedCol])).filter(v=>!Number.isNaN(v))
+    const res = evaluateWestgard(values, { enabledRules })
+    setSummary(res.summary)
+    renderChart(values, res.points, res.summary)
+  }, [rows, selectedCol, enabledRules])
+
   function onFile(file){
+    setLoadError(null)
     Papa.parse(file, { header: true, dynamicTyping: true, skipEmptyLines: true, comments: '#', complete: ({data, meta})=>{
       if (!data || data.length === 0){ alert('No rows parsed'); return }
       setRows(data)
       const keys = Object.keys(data[0])
       setColumns(keys)
-      // pick first numeric column if present
-      let col = null
-      for (const k of keys){ if (data.some(r=> typeof r[k] === 'number')){ col = k; break } }
+      // Prefer a numeric column that isn't a time/index/id column; fall back to any numeric column.
+      let col = keys.find(k=> !NON_VALUE_COLUMN.test(k) && data.some(r=> typeof r[k] === 'number'))
+      if (!col) col = keys.find(k=> data.some(r=> typeof r[k] === 'number'))
       setSelectedCol(col || keys[0])
     }})
   }
 
-  function runAnalysis(col){
-    if (!col) return
-    const values = rows.map(r=>Number(r[col])).filter(v=>!Number.isNaN(v))
-    const res = evaluateWestgard(values, { enabledRules })
-    setSummary(res.summary)
-    renderChart(values, res.points, res.summary)
+  function loadExample(file){
+    setLoadError(null)
+    fetch(`/examples/${file}`)
+      .then(r=>{ if (!r.ok) throw new Error(`${file} (${r.status})`); return r.text() })
+      .then(t=> onFile(new File([t], file, {type:'text/csv'})))
+      .catch(err=> setLoadError(`Could not load example: ${err.message}`))
   }
 
   function renderChart(values, points, summary){
@@ -95,22 +118,26 @@ export default function WestgardDemo(){
       <div className="card">
         <div className="westgard-controls">
           <input type="file" accept=".csv,text/csv" onChange={e=> e.target.files[0] && onFile(e.target.files[0])} />
-          <span className="hint">Upload a CSV with a numeric column (header OK). First numeric column will be suggested.</span>
-          <button className="btn btn-ghost" onClick={()=>{ // load example CSV via fetch from repository raw URL
-            fetch('/examples/na_spikes.csv').then(r=>r.text()).then(t=>{
-              const file = new File([t],'na_spikes.csv',{type:'text/csv'})
-              onFile(file)
-            })
-          }}>Load example (Na+ spikes)</button>
+          <span className="hint">Upload a CSV with a numeric column (header OK). A likely value column will be suggested.</span>
         </div>
+
+        <div className="westgard-controls">
+          <span className="hint">Or load a dummy dataset:</span>
+          {EXAMPLES.map(ex=> (
+            <button key={ex.key} className="btn btn-ghost" title={ex.hint} onClick={()=>loadExample(ex.file)}>
+              {ex.label}
+            </button>
+          ))}
+        </div>
+
+        {loadError && <p className="hint" role="alert">{loadError}</p>}
 
         {columns.length>0 && (
           <div className="field-row">
             <label className="hint" htmlFor="col-select">Column:</label>
-            <select id="col-select" value={selectedCol||''} onChange={e=>{ setSelectedCol(e.target.value); runAnalysis(e.target.value) }}>
+            <select id="col-select" value={selectedCol||''} onChange={e=> setSelectedCol(e.target.value)}>
               {columns.map(c=> <option key={c} value={c}>{c}</option>)}
             </select>
-            <button className="btn btn-primary" onClick={()=>runAnalysis(selectedCol)}>Analyze</button>
             <button className="btn btn-ghost" onClick={exportAnnotated}>Export Annotated CSV</button>
           </div>
         )}
