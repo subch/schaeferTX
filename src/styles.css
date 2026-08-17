@@ -89,18 +89,21 @@ ul{ margin: 0; padding: 0 }
 .brand-sub{ color: var(--text-faint); font-weight: 500; font-size: 12px; display: block }
 
 nav.main-nav{ display: flex; align-items: center; gap: 4px }
-nav.main-nav button{
+nav.main-nav a{
   background: transparent; border: none; color: var(--text-muted);
   padding: 9px 14px; border-radius: var(--radius-sm); cursor: pointer;
   font-size: 14.5px; font-weight: 500; transition: all 150ms ease;
+  text-decoration: none;
 }
-nav.main-nav button:hover{ color: var(--text); background: var(--border-soft) }
-nav.main-nav button[aria-current="page"]{ color: var(--text); background: var(--surface) }
+nav.main-nav a:hover{ color: var(--text); background: var(--border-soft); text-decoration: none }
+nav.main-nav a[aria-current="page"]{ color: var(--text); background: var(--surface) }
 
 .nav-cta{
   background: linear-gradient(90deg, var(--accent), var(--accent-2)) !important;
   color: var(--accent-contrast) !important; font-weight: 700 !important;
+  text-decoration: none !important;
 }
+.nav-cta:hover{ text-decoration: none !important }
 
 .menu-toggle{
   display: none; background: transparent; border: 1px solid var(--border); color: var(--text);
