@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react'
 import { Routes, Route, Link, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import WestgardDemo from './components/WestgardDemo'
 import LeveyJenningsDemo from './components/LeveyJenningsDemo'
+import HL7Visualizer from './components/HL7Visualizer'
 
 const NAV_ITEMS = [
   { path: '/', label: 'Home' },
   { path: '/projects', label: 'Projects' },
   { path: '/westgard', label: 'Westgard Demo' },
   { path: '/levey-jennings', label: 'Levey-Jennings Demo' },
+  { path: '/hl7', label: 'HL7 Visualizer' },
   { path: '/about', label: 'About' },
 ]
 
@@ -127,6 +129,23 @@ function ProjectsPage() {
             <Link className="btn btn-ghost" to="/levey-jennings">Open demo →</Link>
           </div>
         </div>
+
+        <div className="card project-card">
+          <div className="icon">🩺</div>
+          <h3>HL7 message visualizer</h3>
+          <p>
+            An interactive explainer for HL7 v2.x messages — click any field in an order, result,
+            document, or acknowledgement message to see what it means, all parsed client-side.
+          </p>
+          <div className="tag-row">
+            <span className="tag">React</span>
+            <span className="tag">HL7 v2.x</span>
+            <span className="tag">Interop</span>
+          </div>
+          <div>
+            <Link className="btn btn-ghost" to="/hl7">Open demo →</Link>
+          </div>
+        </div>
       </div>
     </section>
   )
@@ -158,6 +177,21 @@ function LeveyJenningsPage() {
         <Link className="btn btn-ghost" to="/projects">← All projects</Link>
       </div>
       <LeveyJenningsDemo />
+    </section>
+  )
+}
+
+function HL7Page() {
+  return (
+    <section className="page-section container">
+      <div className="demo-header">
+        <div>
+          <span className="eyebrow">Interactive demo</span>
+          <h2 style={{ margin: 0 }}>HL7 message visualizer</h2>
+        </div>
+        <Link className="btn btn-ghost" to="/projects">← All projects</Link>
+      </div>
+      <HL7Visualizer />
     </section>
   )
 }
@@ -288,6 +322,7 @@ export default function App() {
           <Route path="/projects" element={<ProjectsPage />} />
           <Route path="/westgard" element={<WestgardPage />} />
           <Route path="/levey-jennings" element={<LeveyJenningsPage />} />
+          <Route path="/hl7" element={<HL7Page />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="*" element={<NotFoundPage />} />
