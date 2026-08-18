@@ -13,6 +13,30 @@ const NAV_ITEMS = [
   { path: '/about', label: 'About' },
 ]
 
+const DEMOS = [
+  {
+    icon: '📉',
+    title: 'Westgard rule explainer & demo',
+    description: 'An interactive control-chart tool implementing the standard Westgard multi-rules, with CSV import/export and rule toggles for exploring assay QC data.',
+    tags: ['React', 'Chart.js', 'QC analytics'],
+    path: '/westgard',
+  },
+  {
+    icon: '📈',
+    title: 'Levey-Jennings chart demo',
+    description: 'Multi-level Levey-Jennings charting with target mean/SD overrides and a monthly PDF report — chart snapshots, flagged points, and a review & approval page for lab director sign-off.',
+    tags: ['React', 'Chart.js', 'PDF export'],
+    path: '/levey-jennings',
+  },
+  {
+    icon: '🩺',
+    title: 'HL7 message visualizer',
+    description: 'An interactive explainer for HL7 v2.x messages — click any field in an order, result, document, or acknowledgement message to see what it means, all parsed client-side.',
+    tags: ['React', 'HL7 v2.x', 'Interop'],
+    path: '/hl7',
+  },
+]
+
 const SERVICES = [
   {
     icon: '📊',
@@ -31,6 +55,22 @@ const SERVICES = [
   },
 ]
 
+function DemoCard({ demo }) {
+  return (
+    <div className="card project-card">
+      <div className="icon">{demo.icon}</div>
+      <h3>{demo.title}</h3>
+      <p>{demo.description}</p>
+      <div className="tag-row">
+        {demo.tags.map((tag) => <span className="tag" key={tag}>{tag}</span>)}
+      </div>
+      <div>
+        <Link className="btn btn-ghost" to={demo.path}>Open demo →</Link>
+      </div>
+    </div>
+  )
+}
+
 function HomePage() {
   return (
     <>
@@ -40,20 +80,31 @@ function HomePage() {
         <p className="lead">
           I help labs and technical teams build reliable QC processes, clear visualizations,
           and reproducible statistical tools — from Westgard multi-rule evaluation to
-          custom analytics software.
+          HL7 interop and custom analytics software.
         </p>
         <div className="hero-actions">
-          <Link className="btn btn-primary" to="/westgard">Try the Westgard demo</Link>
+          <a className="btn btn-primary" href="#demos">Explore the demos</a>
           <Link className="btn btn-ghost" to="/contact">Get in touch</Link>
         </div>
         <div className="hero-stats">
-          <div><strong>6</strong><span>Westgard rules implemented</span></div>
+          <div><strong>3</strong><span>Interactive demos</span></div>
           <div><strong>100%</strong><span>Client-side, no data upload</span></div>
           <div><strong>OSS</strong><span>Open source on GitHub</span></div>
         </div>
       </section>
 
-      <section className="page-section container">
+      <section className="page-section container" id="demos">
+        <div className="section-head">
+          <span className="eyebrow">Try it yourself</span>
+          <h2>Live demos</h2>
+          <p>Each one is a standalone tool you can link to directly — no login, nothing uploaded.</p>
+        </div>
+        <div className="grid cols-3">
+          {DEMOS.map((demo) => <DemoCard demo={demo} key={demo.path} />)}
+        </div>
+      </section>
+
+      <section className="page-section tight container">
         <div className="section-head">
           <span className="eyebrow">What I do</span>
           <h2>Services</h2>
@@ -66,20 +117,6 @@ function HomePage() {
               <p>{s.body}</p>
             </div>
           ))}
-        </div>
-      </section>
-
-      <section className="page-section tight container">
-        <div className="feature-banner">
-          <div>
-            <span className="eyebrow">Featured project</span>
-            <h3>Westgard rule explainer &amp; demo</h3>
-            <p>
-              Upload a CSV of QC values and see 1_2s, 1_3s, 2_2s, R4s, 4_1s, and 10_x rules
-              evaluated live on an interactive control chart.
-            </p>
-          </div>
-          <Link className="btn btn-primary" to="/westgard">Open demo →</Link>
         </div>
       </section>
     </>
@@ -95,57 +132,7 @@ function ProjectsPage() {
         <p>A growing collection of tools built for laboratory quality control and data analysis.</p>
       </div>
       <div className="grid cols-2">
-        <div className="card project-card">
-          <div className="icon">📉</div>
-          <h3>Westgard rule explainer &amp; demo</h3>
-          <p>
-            An interactive control-chart tool implementing the standard Westgard multi-rules,
-            with CSV import/export and rule toggles for exploring assay QC data.
-          </p>
-          <div className="tag-row">
-            <span className="tag">React</span>
-            <span className="tag">Chart.js</span>
-            <span className="tag">QC analytics</span>
-          </div>
-          <div>
-            <Link className="btn btn-ghost" to="/westgard">Open demo →</Link>
-          </div>
-        </div>
-
-        <div className="card project-card">
-          <div className="icon">📈</div>
-          <h3>Levey-Jennings chart demo</h3>
-          <p>
-            Multi-level Levey-Jennings charting with target mean/SD overrides and a monthly
-            PDF report — chart snapshots, flagged points, and a review &amp; approval page for
-            lab director sign-off.
-          </p>
-          <div className="tag-row">
-            <span className="tag">React</span>
-            <span className="tag">Chart.js</span>
-            <span className="tag">PDF export</span>
-          </div>
-          <div>
-            <Link className="btn btn-ghost" to="/levey-jennings">Open demo →</Link>
-          </div>
-        </div>
-
-        <div className="card project-card">
-          <div className="icon">🩺</div>
-          <h3>HL7 message visualizer</h3>
-          <p>
-            An interactive explainer for HL7 v2.x messages — click any field in an order, result,
-            document, or acknowledgement message to see what it means, all parsed client-side.
-          </p>
-          <div className="tag-row">
-            <span className="tag">React</span>
-            <span className="tag">HL7 v2.x</span>
-            <span className="tag">Interop</span>
-          </div>
-          <div>
-            <Link className="btn btn-ghost" to="/hl7">Open demo →</Link>
-          </div>
-        </div>
+        {DEMOS.map((demo) => <DemoCard demo={demo} key={demo.path} />)}
       </div>
     </section>
   )
