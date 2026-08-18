@@ -24,6 +24,13 @@ describe('Westgard evaluator basic cases', ()=>{
     expect(triggered).toBe(true)
   })
 
+  it('detects 4_1s (four consecutive beyond 1SD same side)', ()=>{
+    const values = [101, 101, 101, 101, 100, 100, 100, 100, 100, 100] // first four slightly high
+    const { points } = evaluateWestgard(values)
+    const triggered = [0, 1, 2, 3].every(i => points[i].rules.some(r => r.name === '4_1s'))
+    expect(triggered).toBe(true)
+  })
+
   it('detects 10_x (ten in a row same side)', ()=>{
     const values = Array.from({length:12},(_,i)=>100 + (i<11?1:0)) // first 11 slightly above mean
     const { points } = evaluateWestgard(values)
