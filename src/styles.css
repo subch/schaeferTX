@@ -7,8 +7,8 @@
   --border: rgba(255,255,255,0.08);
   --border-soft: rgba(255,255,255,0.05);
   --text: #eef3f8;
-  --text-muted: #9aa8bd;
-  --text-faint: #6b7890;
+  --text-muted: #a3b1c6;   /* body copy on dark surfaces — keeps ≥4.5:1 on --surface */
+  --text-faint: #7f8ca2;   /* decorative/metadata only — lightened to ~5:1 on --surface */
 
   --accent: #66e0c4;       /* pastel green */
   --accent-2: #7fc7ff;     /* pastel blue */
@@ -48,7 +48,14 @@ body{
 a{ color: var(--accent-2); text-decoration: none }
 a:hover{ text-decoration: underline }
 h1,h2,h3,h4{ line-height: 1.2; font-weight: 700; margin: 0 0 0.5em }
-p{ margin: 0 0 1em; color: var(--text-muted) }
+p{ margin: 0 0 1em; color: var(--text-muted); max-width: 70ch; line-height: 1.65 }
+
+/* Keyboard navigation */
+:focus-visible{
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
 ul{ margin: 0; padding: 0 }
 ::selection{ background: rgba(102,224,196,0.25) }
 
@@ -107,8 +114,8 @@ nav.main-nav a[aria-current="page"]{ color: var(--text); background: var(--surfa
 
 .menu-toggle{
   display: none; background: transparent; border: 1px solid var(--border); color: var(--text);
-  width: 40px; height: 40px; border-radius: var(--radius-sm); cursor: pointer;
-  align-items: center; justify-content: center;
+  width: 44px; height: 44px; border-radius: var(--radius-sm); cursor: pointer;
+  align-items: center; justify-content: center; font-size: 18px;
 }
 
 /* ---------- Buttons ---------- */
@@ -149,8 +156,35 @@ section.page-section.tight{ padding: 44px 0 }
 .hero .lead{ font-size: 18px; max-width: 62ch; color: var(--text-muted) }
 .hero-actions{ display: flex; gap: 12px; margin-top: 28px; flex-wrap: wrap }
 .hero-stats{ display: flex; gap: 36px; margin-top: 48px; flex-wrap: wrap }
+.hero-stats div{ max-width: 220px }
 .hero-stats div strong{ display: block; font-size: 22px; color: var(--text) }
-.hero-stats div span{ color: var(--text-faint); font-size: 13px }
+.hero-stats div span{ color: var(--text-muted); font-size: 13px }
+
+/* ---------- Audience strip ---------- */
+.audience-strip{ padding: 26px 28px }
+.audience-text{ font-size: 16px; margin-bottom: 0; color: var(--text-muted) }
+
+/* ---------- Section footer link ---------- */
+.section-more{ margin-top: 24px; display: flex; gap: 12px; flex-wrap: wrap }
+
+/* ---------- Engagement steps ---------- */
+.step-card{ position: relative }
+.step-num{
+  width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center;
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: var(--accent-contrast); font-weight: 800; font-size: 15px; margin-bottom: 14px;
+}
+
+/* ---------- CTA band ---------- */
+.cta-band{
+  display: flex; align-items: center; justify-content: space-between; gap: 24px; flex-wrap: wrap;
+  background: linear-gradient(120deg, rgba(102,224,196,0.10), rgba(127,199,255,0.06));
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px 32px;
+}
+.cta-band h2{ font-size: clamp(20px, 3vw, 24px); margin-bottom: 6px; max-width: 26ch }
+.cta-band p{ margin-bottom: 0 }
 
 /* ---------- Cards / grid ---------- */
 .grid{ display: grid; gap: 20px }
@@ -173,7 +207,7 @@ section.page-section.tight{ padding: 44px 0 }
 }
 
 .section-head{ max-width: 640px; margin-bottom: 32px }
-.section-head h2{ font-size: 28px }
+.section-head h2{ font-size: clamp(24px, 4vw, 28px) }
 
 /* Featured project banner */
 .feature-banner{
@@ -186,14 +220,24 @@ section.page-section.tight{ padding: 44px 0 }
 .feature-banner h3{ font-size: 20px; margin-bottom: 6px }
 .feature-banner p{ margin-bottom: 0; max-width: 52ch }
 
-/* ---------- Project cards ---------- */
+/* ---------- Project / demo cards ---------- */
 .project-card{ display: flex; flex-direction: column; gap: 12px }
+.project-card p{ margin-bottom: 0 }
+.demo-evidence{ font-size: 14px; color: var(--accent); font-style: italic }
 .tag-row{ display: flex; gap: 8px; flex-wrap: wrap }
 .tag{
-  font-size: 11.5px; font-weight: 600; color: var(--text-muted);
+  font-size: 12px; font-weight: 600; color: var(--text-muted);
   background: var(--border-soft); border: 1px solid var(--border-soft);
   padding: 3px 9px; border-radius: 999px;
 }
+
+/* ---------- Services page ---------- */
+.service-list{ display: grid; gap: 18px; max-width: 820px }
+.service-detail{ display: flex; gap: 18px; align-items: flex-start }
+.service-detail .icon{ flex: none; margin-bottom: 0 }
+.service-detail h3{ font-size: 18px }
+.service-detail p:last-child{ margin-bottom: 0 }
+.deliverables{ font-size: 14px; color: var(--text-muted); border-left: 3px solid var(--accent); padding-left: 12px }
 
 /* ---------- About ---------- */
 .about-grid{ display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 40px; align-items: start }
@@ -223,7 +267,7 @@ section.page-section.tight{ padding: 44px 0 }
 /* ---------- Westgard demo ---------- */
 .demo-header{ display: flex; align-items: baseline; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 24px }
 .westgard-controls{ display:flex; gap:12px; align-items:center; flex-wrap: wrap; margin-bottom:16px }
-.westgard-controls .hint{ color: var(--text-faint); font-size: 13px }
+.westgard-controls .hint{ color: var(--text-muted); font-size: 13.5px }
 input[type=file]{ color: var(--text-muted); font-size: 13.5px }
 
 .chart-wrap{ background: var(--bg-elevated); padding: 14px; border-radius: var(--radius-sm); border: 1px solid var(--border-soft) }
@@ -248,7 +292,7 @@ select{
   padding: 12px 14px;
 }
 .stat-tile strong{ display:block; font-size: 19px; font-family: var(--font-mono) }
-.stat-tile span{ color: var(--text-faint); font-size: 12px }
+.stat-tile span{ color: var(--text-muted); font-size: 12.5px }
 
 .violations-list{ list-style: none; display: grid; gap: 8px; margin-top: 12px }
 .violations-list li{
@@ -257,7 +301,7 @@ select{
   padding: 10px 14px; border-radius: var(--radius-sm); font-size: 14px;
 }
 .violations-list .rule-code{ font-family: var(--font-mono); font-weight: 700; color: var(--text) }
-.violations-list .rule-desc{ display: block; color: var(--text-faint); font-size: 12.5px; margin-top: 2px }
+.violations-list .rule-desc{ display: block; color: var(--text-muted); font-size: 13px; margin-top: 2px }
 .badge{
   font-family: var(--font-mono); font-size: 12px; font-weight: 700; flex: none;
   padding: 3px 9px; border-radius: 999px; background: rgba(255,107,107,0.14); color: var(--danger);
@@ -317,9 +361,16 @@ select{
     padding: 10px; display: none;
   }
   nav.main-nav.open{ display: flex }
-  nav.main-nav button{ text-align: left; padding: 12px 14px }
+  nav.main-nav a, nav.main-nav .nav-cta{
+    text-align: left; padding: 12px 14px; min-height: 44px;
+    display: flex; align-items: center; font-size: 15px;
+  }
+  .nav-cta{ justify-content: center; margin-top: 6px }
   .grid.cols-3, .grid.cols-2{ grid-template-columns: 1fr }
   .hero{ padding: 56px 0 40px }
+  .hero .lead{ font-size: 16.5px }
   .hero-stats{ gap: 24px }
   section.page-section{ padding: 44px 0 }
+  .service-detail{ flex-direction: column }
+  .cta-band{ padding: 28px 22px }
 }
