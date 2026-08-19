@@ -221,7 +221,7 @@ function ServicesPage() {
     <section className="page-section container">
       <div className="section-head">
         <span className="eyebrow">Services</span>
-        <h2>What I do for labs</h2>
+        <h1>What I do for labs</h1>
         <p>
           Every engagement is fixed-scope with named deliverables — you’ll know what
           you’re getting and what it costs before work starts.
@@ -252,7 +252,7 @@ function DemosPage() {
     <section className="page-section container">
       <div className="section-head">
         <span className="eyebrow">Live demos</span>
-        <h2>Try the tools</h2>
+        <h1>Try the tools</h1>
         <p>
           These are working examples of the kind of software I build for labs — QC
           evaluation, chart review, and interface work. Everything runs in your browser;
@@ -272,7 +272,7 @@ function WestgardPage() {
       <div className="demo-header">
         <div>
           <span className="eyebrow">Live demo</span>
-          <h2 style={{ margin: 0 }}>Westgard rule evaluator</h2>
+          <h1 style={{ margin: 0 }}>Westgard rule evaluator</h1>
         </div>
         <Link className="btn btn-ghost" to="/demos">← All demos</Link>
       </div>
@@ -287,7 +287,7 @@ function LeveyJenningsPage() {
       <div className="demo-header">
         <div>
           <span className="eyebrow">Live demo</span>
-          <h2 style={{ margin: 0 }}>Levey-Jennings charts + PDF QC report</h2>
+          <h1 style={{ margin: 0 }}>Levey-Jennings charts + PDF QC report</h1>
         </div>
         <Link className="btn btn-ghost" to="/demos">← All demos</Link>
       </div>
@@ -302,7 +302,7 @@ function HL7Page() {
       <div className="demo-header">
         <div>
           <span className="eyebrow">Live demo</span>
-          <h2 style={{ margin: 0 }}>HL7 v2 message visualizer</h2>
+          <h1 style={{ margin: 0 }}>HL7 v2 message visualizer</h1>
         </div>
         <Link className="btn btn-ghost" to="/demos">← All demos</Link>
       </div>
@@ -317,7 +317,7 @@ function AboutPage() {
       <div className="about-grid">
         <div className="prose">
           <span className="eyebrow">About</span>
-          <h2>Hi, I’m Travis Schaefer.</h2>
+          <h1>Hi, I’m Travis Schaefer.</h1>
           <p>
             I’m a consultant for clinical and toxicology laboratories. My background is
             urine toxicology by LC-MS/MS
@@ -363,7 +363,7 @@ function ContactPage() {
     <section className="page-section container">
       <div className="section-head">
         <span className="eyebrow">Get in touch</span>
-        <h2>Contact</h2>
+        <h1>Contact</h1>
         <p>
           Email is best. A line or two about your lab type, instruments, LIS, and the
           problem you’re trying to solve is plenty to start — I’ll reply within
@@ -396,7 +396,7 @@ function NotFoundPage() {
     <section className="page-section container">
       <div className="section-head">
         <span className="eyebrow">404</span>
-        <h2>Page not found</h2>
+        <h1>Page not found</h1>
         <p>That page doesn’t exist. <Link to="/">Back to home</Link>.</p>
       </div>
     </section>

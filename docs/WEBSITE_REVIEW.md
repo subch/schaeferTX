@@ -149,3 +149,50 @@ Also review before launch (not placeholders, but judgment calls):
 - Per-route `<title>`/meta (react-helmet or a small effect) for SEO on
   /services and /demos.
 - Testimonials/client logos once real ones exist (none fabricated now).
+
+---
+
+## 5. Desktop verification pass (2026-08-19)
+
+Run on the real toolchain (node 24.19, npm 12.0.2, vite 5.4.21, vitest 1.6.1)
+on Windows, which the authoring sandbox could not do.
+
+- `npm install` · `npm run test` (6/6) · `npm run build` (440 modules, 6.2s) —
+  all green. The sandbox's shim-based verification held up; no source changes
+  were needed to make the branch build.
+- All routes render with no console errors: `/`, `/services`, `/demos`,
+  `/about`, `/contact`, `/westgard`, `/levey-jennings`, `/hl7`. The
+  `/projects` → `/demos` redirect resolves correctly (verified
+  `location.pathname === "/demos"` after loading `/projects`).
+
+### Fixed: missing `<h1>` on every page except Home
+
+The accessibility pass lightened contrast and fixed focus/tap targets, but
+document structure was still broken: **only Home had an `<h1>`.** Every other
+route opened at `<h2>`, so `/services`, `/demos`, `/about`, `/contact`, the
+three demo pages, and 404 each rendered a heading hierarchy that starts at
+level 2 with no level 1 — screen-reader users lose the page-title landmark,
+and the h1→h2 outline is malformed.
+
+Page-level titles were promoted to `<h1>` (one per route). Home is unchanged:
+its hero keeps the only `<h1>` and its four section headings correctly remain
+`<h2>`, since they are subsections of the page, not page titles.
+
+To keep this a semantic change and not a visual one, `.section-head h1` was
+added alongside the existing `.section-head h2` rule, and explicit sizing was
+added for `.demo-header h1` / `.about-grid .prose h1` (which had no CSS and
+would otherwise have jumped to the browser-default 2em). Verified by computed
+style: every page title still renders at 28px, and the hero `<h1>` still
+renders at 52px with its gradient treatment intact.
+
+### CI now runs tests
+
+`.github/workflows/deploy.yml` gained `- run: npm run test` between `npm ci`
+and `npm run build`, per the recommendation in §2. Red tests now block the
+Pages deploy — this is the gap that let the broken Westgard suite ship
+unnoticed.
+
+### Still open
+
+The three `TODO(Travis)` placeholders in §3 are untouched — they need facts
+only Travis can supply, and nothing was invented to fill them.
