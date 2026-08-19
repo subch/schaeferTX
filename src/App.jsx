@@ -366,9 +366,11 @@ function ContactPage() {
         <h1>Contact</h1>
         <p>
           Email is best. A line or two about your lab type, instruments, LIS, and the
-          problem you’re trying to solve is plenty to start — I’ll reply within
-          [1–2 business days]{/* TODO(Travis): confirm realistic response time */} to set
-          up a scoping call.
+          problem you’re trying to solve is plenty to start — I’ll get back to you to
+          set up a scoping call.
+          {/* TODO(Travis): add a concrete response-time commitment once you know what
+              you can reliably hold to, e.g. "within one business day". Deliberately
+              omitted rather than promising a number that was never confirmed. */}
         </p>
       </div>
       <div className="card contact-card">
