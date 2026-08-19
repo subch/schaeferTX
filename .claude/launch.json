@@ -1,0 +1,64 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "schaefertx-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev"
+      ],
+      "port": 5173,
+      "autoPort": true
+    },
+    {
+      "name": "lab-tools-dev",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "C:/Users/tscha/schaefertx-lab-tools",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5175",
+        "--strictPort"
+      ],
+      "port": 5175,
+      "autoPort": false
+    },
+    {
+      "name": "mirth-backend",
+      "runtimeExecutable": "C:/Users/tscha/mirth-controller/backend/.venv/Scripts/python.exe",
+      "runtimeArgs": [
+        "-m",
+        "uvicorn",
+        "--env-file",
+        "C:/Users/tscha/mirth-controller/backend/.env",
+        "--app-dir",
+        "C:/Users/tscha/mirth-controller/backend",
+        "app.main:app",
+        "--port",
+        "8000"
+      ],
+      "port": 8000,
+      "autoPort": false
+    },
+    {
+      "name": "mirth-frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "--prefix",
+        "C:/Users/tscha/mirth-controller/frontend",
+        "run",
+        "dev",
+        "--",
+        "--port",
+        "5173",
+        "--strictPort"
+      ],
+      "port": 5173,
+      "autoPort": false
+    }
+  ]
+}

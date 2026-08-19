@@ -377,3 +377,34 @@ select{
   .service-detail{ flex-direction: column }
   .cta-band{ padding: 28px 22px }
 }
+
+/* ---- toolkit access / lead capture ---- */
+.toolkit-form { max-width: 760px; }
+.toolkit-form h2 { font-size: clamp(20px, 3vw, 24px); margin-bottom: 10px; }
+.toolkit-form .muted-note { color: var(--text-muted); font-size: 13.5px; }
+
+.toolkit-fields { display: flex; flex-direction: column; gap: 14px; margin-top: 18px; }
+.toolkit-fields .field-row { display: flex; gap: 14px; flex-wrap: wrap; }
+.toolkit-fields label { display: flex; flex-direction: column; gap: 6px; flex: 1 1 220px; min-width: 0; }
+.toolkit-fields label span { font-size: 12.5px; color: var(--text-muted); }
+.toolkit-fields input,
+.toolkit-fields select {
+  width: 100%;
+  padding: 10px 12px;
+  min-height: 44px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  font: inherit;
+}
+.toolkit-fields input:focus-visible,
+.toolkit-fields select:focus-visible { outline: 2px solid var(--accent); outline-offset: 1px; }
+.toolkit-fields button { align-self: flex-start; min-height: 44px; }
+
+.form-error {
+  padding: 10px 12px; border-radius: 8px; font-size: 13.5px;
+  color: #ffb4b4;
+  background: rgba(255, 107, 107, 0.1);
+  border: 1px solid rgba(255, 107, 107, 0.35);
+}

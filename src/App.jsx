@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import ToolkitAccessForm from './components/ToolkitAccessForm'
 import { Routes, Route, Link, NavLink, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import WestgardDemo from './components/WestgardDemo'
 import LeveyJenningsDemo from './components/LeveyJenningsDemo'
@@ -261,6 +262,9 @@ function DemosPage() {
       </div>
       <div className="grid cols-2">
         {DEMOS.map((demo) => <DemoCard demo={demo} key={demo.path} />)}
+      </div>
+      <div className="mt">
+        <ToolkitAccessForm demo="demos-page" />
       </div>
     </section>
   )

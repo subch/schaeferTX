@@ -28,6 +28,14 @@ jobs:
       - run: npm ci
       - run: npm run test
       - run: npm run build
+        env:
+          # Publishable Supabase values for the toolkit lead-capture form.
+          # These are designed to ship in client code: demo_leads has an
+          # insert-only RLS policy and no select policy, so this key can add a
+          # lead and cannot read any back. Not secrets, deliberately not in
+          # Actions secrets.
+          VITE_SUPABASE_URL: https://gitwwldcuczklsgeegct.supabase.co
+          VITE_SUPABASE_PUBLISHABLE_KEY: sb_publishable_XwTaLxmGDa7d52lVMgpA8A_G3mzfUQl
 
       - uses: actions/upload-pages-artifact@v3
         with:
