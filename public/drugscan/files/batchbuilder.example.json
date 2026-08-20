@@ -1,0 +1,61 @@
+{
+  "_comment": [
+    "Copy to batchbuilder.json beside the executable to override defaults.",
+    "Every key is optional. Anything omitted keeps its built-in value, so the",
+    "application still runs correctly with no config file at all.",
+    "Apollo credentials are compiled in; set them here only to change them.",
+    "extra_ok_statuses ADDS to each input format's own accepted statuses",
+    "(Tox4: No Error; Tox6: Correct pipetting) rather than replacing them."
+  ],
+
+  "apollo": {
+    "server": "YOUR_SQL_SERVER\\INSTANCE",
+    "database": "YOUR_DATABASE",
+    "driver": null,
+    "timeout": 10
+  },
+
+  "form": {
+    "instruments": [
+      "LC_5", "LC_7", "LC_9", "LC_12", "LC_13", "LC_15", "LC_17", "LC_18",
+      "LC_19", "LC_20", "LC_21", "LC_23", "LC_24", "LC_25", "LC_27", "LC_28"
+    ],
+    "methods": ["TO4", "TO6"],
+    "rack_positions": ["1", "2"],
+    "plate_positions": ["1", "2", "3"],
+    "streams": ["1", "2"],
+    "acq_methods": ["TO6_Str1", "TO6_Str2"]
+  },
+
+  "settings": {
+    "inj_vol": "10",
+    "dilut_fact": "1",
+    "wght_to_vol": "0",
+    "set_name": "SET1",
+    "proc_method": "none",
+    "default_rack_code": "Deep Well MTP 96 Cooled",
+    "default_plate_type": "Deep Well MTP 96 Cooled",
+    "alt_rack_code": "3 Drawer",
+    "alt_plate_type": "2x DW96",
+    "alt_instruments": ["LC_7"],
+    "alt_methods": []
+  },
+
+  "expectations": {
+    "cal_levels": 7,
+    "qc_levels": 4,
+    "require_neg": true,
+    "require_hyd": true,
+    "require_ext": true
+  },
+
+  "extra_ok_statuses": [],
+  "position_strategy": "row_major_12",
+
+  "method_overrides": {},
+
+  "output_dir": null,
+  "input_dir": null,
+  "port": 0,
+  "open_browser": true
+}

@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ app_name }}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}?v={{ version }}">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark" aria-hidden="true"></span>
+    <div>
+      <h1>{{ app_name }}</h1>
+      <p class="sub">Hamilton run report &rarr; Ascent batch files</p>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <span id="apollo-pill" class="pill pill-idle" title="{{ apollo }}">
+      Checking Apollo&hellip;
+    </span>
+    <span class="version">v{{ version }}</span>
+  </div>
+</header>
+
+{% if config_note %}
+<div class="banner banner-warn">{{ config_note }}</div>
+{% endif %}
+{% if output_note %}
+<div class="banner banner-warn">{{ output_note }}</div>
+{% endif %}
+
+<main>
+  <section class="panel panel-form">
+    <h2>Batch details</h2>
+    <form id="batch-form" autocomplete="off">
+      <div class="grid-2">
+        <label>Instrument
+          <select name="instrument" required>
+            <option value="">Select&hellip;</option>
+            {% for i in form.instruments %}<option>{{ i }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>Method
+          <select name="method" required>
+            {% if form.methods|length == 1 %}
+              {% for m in form.methods %}<option selected>{{ m }}</option>{% endfor %}
+            {% else %}
+              <option value="">Select&hellip;</option>
+              {% for m in form.methods %}<option>{{ m }}</option>{% endfor %}
+            {% endif %}
+          </select>
+        </label>
+        <label>Rack position
+          <select name="rack_pos" required>
+            <option value="">Select&hellip;</option>
+            {% for r in form.rack_positions %}<option>{{ r }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>Plate position
+          <select name="plate_pos" required>
+            <option value="">Select&hellip;</option>
+            {% for p in form.plate_positions %}<option>{{ p }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>Stream
+          <select name="stream" required>
+            <option value="">Select&hellip;</option>
+            {% for s in form.streams %}<option>{{ s }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>Plate code
+          <input name="plate_code" required spellcheck="false"
+                 placeholder="e.g. abc1234">
+        </label>
+        <label>Acquisition method
+          <select name="acq_method">
+            <option value="">Automatic (method + stream)</option>
+            {% for a in form.acq_methods %}<option>{{ a }}</option>{% endfor %}
+          </select>
+        </label>
+        <label id="condition-field" hidden>Condition
+          <select name="condition">
+            <option value="">Auto-detected from plate</option>
+            {% for c in conditions %}<option>{{ c }}</option>{% endfor %}
+          </select>
+        </label>
+        <label>MBN 1
+          <input name="mbn1" required inputmode="numeric" spellcheck="false"
+                 placeholder="e.g. 500101">
+        </label>
+        <label>MBN 2
+          <input name="mbn2" spellcheck="false"
+                 placeholder="leave blank for a single MBN">
+        </label>
+      </div>
+
+      <div id="dropzone" class="dropzone" tabindex="0" role="button"
+           aria-label="Choose or drop the Hamilton report">
+        <input type="file" id="file-input" accept=".xls" hidden>
+        <div class="dz-idle">
+          <strong>Drop the Hamilton report here</strong>
+          <span>or click to browse &mdash; Excel 97-2003 (.xls)</span>
+        </div>
+        <div class="dz-loaded" hidden>
+          <strong id="file-name"></strong>
+          <span id="file-summary"></span>
+          <button type="button" class="link" id="clear-file">Choose a different file</button>
+        </div>
+      </div>
+
+      <label class="check" id="mockup-field" hidden>
+        <input type="checkbox" name="mockup" value="1">
+        <span>Plate-only mockup &mdash; skip Apollo and build straight from the
+        plate. For sponsor testing only; nothing is verified.</span>
+      </label>
+
+      <div class="actions">
+        <button type="button" id="btn-check" class="btn btn-secondary" disabled>
+          Check batch
+        </button>
+        <button type="submit" id="btn-generate" class="btn btn-primary" disabled>
+          Generate files
+        </button>
+      </div>
+      <p class="hint">
+        <strong>Check</strong> validates against Apollo and writes nothing.
+        <strong>Generate</strong> writes the batch folder to
+        <code>{{ output_dir }}</code>.
+      </p>
+    </form>
+  </section>
+
+  <section class="panel panel-plate">
+    <div class="panel-head">
+      <h2>Plate map</h2>
+      <div id="detected" class="detected" hidden>
+        <span class="chip chip-format" id="chip-format"></span>
+        <span class="chip chip-orient" id="chip-orient"></span>
+        <span class="chip chip-cond" id="chip-cond" hidden></span>
+      </div>
+      <div id="legend" class="legend" hidden>
+        <span class="key"><i class="sw sw-cal"></i>Calibrator</span>
+        <span class="key"><i class="sw sw-qc"></i>Control</span>
+        <span class="key"><i class="sw sw-qualcal"></i>Cutoff cal</span>
+        <span class="key"><i class="sw sw-qualqc"></i>Qual QC</span>
+        <span class="key"><i class="sw sw-neg"></i>Negative</span>
+        <span class="key"><i class="sw sw-mbn1"></i>MBN 1</span>
+        <span class="key"><i class="sw sw-mbn2"></i>MBN 2</span>
+        <span class="key"><i class="sw sw-repeat"></i>Repeat</span>
+        <span class="key"><i class="sw sw-error"></i>Removed</span>
+        <span class="key"><i class="sw sw-empty"></i>Empty</span>
+      </div>
+    </div>
+    <div id="plate" class="plate plate-empty">
+      <p class="placeholder">Choose a Hamilton report to see the plate layout.</p>
+    </div>
+    <div id="counts" class="counts" hidden></div>
+  </section>
+
+  <section class="panel panel-results">
+    <div class="panel-head">
+      <h2>Results</h2>
+      <div id="result-actions" hidden>
+        <a id="download-zip" class="btn btn-small" href="#" download>Download all</a>
+      </div>
+    </div>
+    <div id="results">
+      <p class="placeholder">Nothing checked yet.</p>
+    </div>
+  </section>
+
+  <section class="panel panel-history">
+    <div class="panel-head">
+      <h2>Recent runs</h2>
+      <button type="button" id="refresh-runs" class="link">Refresh</button>
+    </div>
+    <div id="runs"><p class="placeholder">Loading&hellip;</p></div>
+  </section>
+</main>
+
+<div id="busy" class="busy" hidden><div class="spinner"></div><span id="busy-text"></span></div>
+
+<script>
+  window.BB = {
+    singleMbn: {{ single_mbn|tojson }},
+    outputDir: {{ output_dir|tojson }}
+  };
+</script>
+<script src="{{ url_for('static', filename='app.js') }}?v={{ version }}"></script>
+</body>
+</html>

@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Batch Builder - source</title>
+<style>
+  :root {
+    --bg:#f6f7f9; --panel:#fff; --ink:#16202e; --soft:#5b6b80;
+    --line:#dfe4ec; --accent:#1f5fa9; --warn-bg:#fdf3e0; --warn-ink:#7a5209;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg:#10151c; --panel:#18202b; --ink:#e6ecf5; --soft:#93a3b8;
+            --line:#26313f; --accent:#5b9ee0; --warn-bg:#33270f;
+            --warn-ink:#e2b263; }
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink);
+         font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:860px; margin:0 auto; padding:40px 20px 80px; }
+  h1 { font-size:26px; margin:0 0 4px; }
+  .sub { color:var(--soft); margin:0 0 28px; }
+  h2 { font-size:18px; margin:34px 0 12px; }
+  h3 { font-size:15px; margin:22px 0 8px; }
+  h3 em { color:var(--soft); font-style:normal; font-weight:400; font-size:13px; }
+  .card { background:var(--panel); border:1px solid var(--line);
+          border-radius:10px; padding:18px 20px; margin-bottom:18px; }
+  .warn { background:var(--warn-bg); color:var(--warn-ink);
+          border-color:transparent; }
+  .warn strong { display:block; margin-bottom:4px; }
+  ol { padding-left:20px; } ol li { margin-bottom:10px; }
+  code, pre { font-family:Consolas,"SF Mono",Menlo,monospace; font-size:13.5px; }
+  pre { background:var(--bg); border:1px solid var(--line); border-radius:7px;
+        padding:11px 13px; overflow-x:auto; margin:8px 0; }
+  code { background:var(--bg); padding:1px 5px; border-radius:4px; }
+  pre code { background:none; padding:0; }
+  ul.files { list-style:none; padding:0; margin:0;
+             border:1px solid var(--line); border-radius:8px; overflow:hidden; }
+  ul.files li { display:flex; justify-content:space-between; gap:12px;
+                padding:7px 13px; border-bottom:1px solid var(--line);
+                background:var(--panel); font-size:13.5px; }
+  ul.files li:last-child { border-bottom:0; }
+  ul.files a { color:var(--accent); text-decoration:none; word-break:break-all;
+               font-family:Consolas,monospace; }
+  ul.files a:hover { text-decoration:underline; }
+  ul.files span { color:var(--soft); font-size:12px; white-space:nowrap; }
+  .dl { display:inline-block; background:var(--accent); color:#fff;
+        padding:10px 18px; border-radius:8px; text-decoration:none;
+        font-weight:600; }
+  .dl span { font-weight:400; opacity:.85; }
+  footer { margin-top:44px; padding-top:18px; border-top:1px solid var(--line);
+           color:var(--soft); font-size:13px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>Batch Builder</h1>
+  <p class="sub">Hamilton plate workbook &rarr; Ascent batch files. Source, for
+  building on the lab network.</p>
+
+  <div class="card warn">
+    <strong>This is a sanitised copy.</strong>
+    Database credentials, server names, batch numbers and specimen identifiers
+    have been replaced with synthetic values. It runs and all tests pass, but it
+    will not reach a real database until you supply the real connection details
+    locally, as described in step&nbsp;3.
+  </div>
+
+  <p><a class="dl" href="batch-builder-source.zip">Download everything
+  <span>&middot; 185 KB</span></a></p>
+
+  <h2>Getting it running</h2>
+  <div class="card">
+    <ol>
+      <li><strong>Get the files.</strong> Use the download button above, or grab
+      individual files from the list below. Keep the folder layout: the tests
+      and the build both rely on it.</li>
+
+      <li><strong>Set it up.</strong> Needs Python 3.10 or newer.
+      <pre><code>python make.py setup</code></pre>
+      Creates an isolated environment, installs dependencies and runs the test
+      suite. You should see <code>236 passed</code>. Nothing is installed
+      machine-wide.</li>
+
+      <li><strong>Add your connection details.</strong> Create
+      <code>batchbuilder.json</code> next to <code>make.py</code>:
+      <pre><code>{
+  "apollo": {
+    "server": "YOUR_SERVER\\INSTANCE",
+    "database": "YOUR_DATABASE",
+    "uid": "YOUR_USER",
+    "pwd": "YOUR_PASSWORD"
+  }
+}</code></pre>
+      Anything you put here overrides the placeholders in the source. This file
+      is git-ignored and is not part of the download.</li>
+
+      <li><strong>Try it.</strong>
+      <pre><code>python make.py run</code></pre>
+      Starts a local web page in your browser. It runs on 127.0.0.1 only &mdash;
+      nothing is exposed on the network. Add <code>--demo</code> to try the
+      interface with no database at all.</li>
+
+      <li><strong>Build the executable</strong>, once you are happy it works.
+      <pre><code>python make.py build</code></pre>
+      Produces <code>build/dist/BatchBuilder/</code>. Copy that
+      <em>entire folder</em> to wherever analysts run it from &mdash; the .exe
+      needs the <code>_internal</code> folder beside it.</li>
+    </ol>
+    <p style="margin-bottom:0"><code>python make.py</code> lists every task.
+    <code>python make.py doctor</code> reports what is installed and what is
+    missing without changing anything. Full detail, including troubleshooting,
+    is in <a href="files/BUILD.md">BUILD.md</a>.</p>
+  </div>
+
+  <h2>Files <em style="color:var(--soft);font-style:normal;font-size:13px">
+  (67)</em></h2>
+    <section>
+      <h3>Start here <em>(3)</em></h3>
+      <ul class="files">
+        <li><a href="files/BUILD.md">BUILD.md</a><span>9 KB</span></li>
+        <li><a href="files/make.py">make.py</a><span>14 KB</span></li>
+        <li><a href="files/README.md">README.md</a><span>15 KB</span></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Application <em>(18)</em></h3>
+      <ul class="files">
+        <li><a href="files/src/batchbuilder/__init__.py">src/batchbuilder/__init__.py</a><span>119 B</span></li>
+        <li><a href="files/src/batchbuilder/__main__.py">src/batchbuilder/__main__.py</a><span>7 KB</span></li>
+        <li><a href="files/src/batchbuilder/apollo.py">src/batchbuilder/apollo.py</a><span>9 KB</span></li>
+        <li><a href="files/src/batchbuilder/config.py">src/batchbuilder/config.py</a><span>8 KB</span></li>
+        <li><a href="files/src/batchbuilder/controls.py">src/batchbuilder/controls.py</a><span>6 KB</span></li>
+        <li><a href="files/src/batchbuilder/generator.py">src/batchbuilder/generator.py</a><span>15 KB</span></li>
+        <li><a href="files/src/batchbuilder/generator_tox6.py">src/batchbuilder/generator_tox6.py</a><span>9 KB</span></li>
+        <li><a href="files/src/batchbuilder/hamilton.py">src/batchbuilder/hamilton.py</a><span>7 KB</span></li>
+        <li><a href="files/src/batchbuilder/models.py">src/batchbuilder/models.py</a><span>7 KB</span></li>
+        <li><a href="files/src/batchbuilder/positions.py">src/batchbuilder/positions.py</a><span>2 KB</span></li>
+        <li><a href="files/src/batchbuilder/readers.py">src/batchbuilder/readers.py</a><span>4 KB</span></li>
+        <li><a href="files/src/batchbuilder/report.py">src/batchbuilder/report.py</a><span>3 KB</span></li>
+        <li><a href="files/src/batchbuilder/service.py">src/batchbuilder/service.py</a><span>9 KB</span></li>
+        <li><a href="files/src/batchbuilder/static/app.css">src/batchbuilder/static/app.css</a><span>10 KB</span></li>
+        <li><a href="files/src/batchbuilder/static/app.js">src/batchbuilder/static/app.js</a><span>16 KB</span></li>
+        <li><a href="files/src/batchbuilder/templates/index.html">src/batchbuilder/templates/index.html</a><span>7 KB</span></li>
+        <li><a href="files/src/batchbuilder/validation.py">src/batchbuilder/validation.py</a><span>11 KB</span></li>
+        <li><a href="files/src/batchbuilder/webapp.py">src/batchbuilder/webapp.py</a><span>11 KB</span></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Tests <em>(18)</em></h3>
+      <ul class="files">
+        <li><a href="files/tests/conftest.py">tests/conftest.py</a><span>1 KB</span></li>
+        <li><a href="files/tests/fixtures/apollo_fixture.json">tests/fixtures/apollo_fixture.json</a><span>5 KB</span></li>
+        <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Combo.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Combo.xls</a><span>30 KB</span></li>
+        <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Qual.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Qual.xls</a><span>30 KB</span></li>
+        <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Quant.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Quant.xls</a><span>30 KB</span></li>
+        <li><a href="files/tests/fixtures/expected/abc1234_500101_500102_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500101_500102_619_TO4_Str1_LC_13.txt</a><span>19 KB</span></li>
+        <li><a href="files/tests/fixtures/expected/abc1234_500101_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500101_619_TO4_Str1_LC_13.txt</a><span>9 KB</span></li>
+        <li><a href="files/tests/fixtures/expected/abc1234_500102_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500102_619_TO4_Str1_LC_13.txt</a><span>13 KB</span></li>
+        <li><a href="files/tests/fixtures/tox4_sample_plate.xls">tests/fixtures/tox4_sample_plate.xls</a><span>182 KB</span></li>
+        <li><a href="files/tests/test_config.py">tests/test_config.py</a><span>3 KB</span></li>
+        <li><a href="files/tests/test_frontend.py">tests/test_frontend.py</a><span>7 KB</span></li>
+        <li><a href="files/tests/test_golden.py">tests/test_golden.py</a><span>3 KB</span></li>
+        <li><a href="files/tests/test_hamilton.py">tests/test_hamilton.py</a><span>7 KB</span></li>
+        <li><a href="files/tests/test_launcher.py">tests/test_launcher.py</a><span>5 KB</span></li>
+        <li><a href="files/tests/test_service.py">tests/test_service.py</a><span>5 KB</span></li>
+        <li><a href="files/tests/test_tox6.py">tests/test_tox6.py</a><span>15 KB</span></li>
+        <li><a href="files/tests/test_validation.py">tests/test_validation.py</a><span>5 KB</span></li>
+        <li><a href="files/tests/test_webapp.py">tests/test_webapp.py</a><span>15 KB</span></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Packaging <em>(7)</em></h3>
+      <ul class="files">
+        <li><a href="files/build/batchbuilder.spec">build/batchbuilder.spec</a><span>2 KB</span></li>
+        <li><a href="files/build/build.ps1">build/build.ps1</a><span>6 KB</span></li>
+        <li><a href="files/build/derive_fixture.py">build/derive_fixture.py</a><span>3 KB</span></li>
+        <li><a href="files/build/entry.py">build/entry.py</a><span>1 KB</span></li>
+        <li><a href="files/build/make_email_zip.py">build/make_email_zip.py</a><span>6 KB</span></li>
+        <li><a href="files/build/reference_impl.py">build/reference_impl.py</a><span>13 KB</span></li>
+        <li><a href="files/build/validate_fixture.py">build/validate_fixture.py</a><span>2 KB</span></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Reference and examples <em>(6)</em></h3>
+      <ul class="files">
+        <li><a href="files/mockups/tox6/Barcode05_Combo_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Combo_819_TO6_Str1_LC_13.txt</a><span>19 KB</span></li>
+        <li><a href="files/mockups/tox6/Barcode05_Qual_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Qual_819_TO6_Str1_LC_13.txt</a><span>18 KB</span></li>
+        <li><a href="files/mockups/tox6/Barcode05_Quant_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Quant_819_TO6_Str1_LC_13.txt</a><span>19 KB</span></li>
+        <li><a href="files/mockups/tox6/README.md">mockups/tox6/README.md</a><span>3 KB</span></li>
+        <li><a href="files/reference/bb_v1.py">reference/bb_v1.py</a><span>34 KB</span></li>
+        <li><a href="files/vendor/README.md">vendor/README.md</a><span>1 KB</span></li>
+      </ul>
+    </section>
+    <section>
+      <h3>Project files <em>(15)</em></h3>
+      <ul class="files">
+        <li><a href="files/.gitignore">.gitignore</a><span>396 B</span></li>
+        <li><a href="files/.vscode/extensions.json">.vscode/extensions.json</a><span>225 B</span></li>
+        <li><a href="files/.vscode/launch.json">.vscode/launch.json</a><span>2 KB</span></li>
+        <li><a href="files/.vscode/settings.json">.vscode/settings.json</a><span>2 KB</span></li>
+        <li><a href="files/.vscode/tasks.json">.vscode/tasks.json</a><span>3 KB</span></li>
+        <li><a href="files/batchbuilder.example.json">batchbuilder.example.json</a><span>2 KB</span></li>
+        <li><a href="files/build.bat">build.bat</a><span>424 B</span></li>
+        <li><a href="files/CHANGELOG.md">CHANGELOG.md</a><span>12 KB</span></li>
+        <li><a href="files/pytest.ini">pytest.ini</a><span>91 B</span></li>
+        <li><a href="files/requirements-dev.txt">requirements-dev.txt</a><span>89 B</span></li>
+        <li><a href="files/requirements.txt">requirements.txt</a><span>65 B</span></li>
+        <li><a href="files/run.bat">run.bat</a><span>471 B</span></li>
+        <li><a href="files/run.ps1">run.ps1</a><span>2 KB</span></li>
+        <li><a href="files/setup.bat">setup.bat</a><span>562 B</span></li>
+        <li><a href="files/setup.ps1">setup.ps1</a><span>7 KB</span></li>
+      </ul>
+    </section>
+
+  <footer>
+    Internal working files. Sanitised for transfer &mdash; supply real
+    connection details locally.
+  </footer>
+
+</div>
+</body>
+</html>

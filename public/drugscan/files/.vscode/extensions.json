@@ -1,0 +1,8 @@
+{
+  // VS Code will offer to install these when the folder is opened. Only the
+  // Python extension is really needed; the others are conveniences.
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.debugpy"
+  ]
+}

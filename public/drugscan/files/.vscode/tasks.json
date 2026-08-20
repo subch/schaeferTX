@@ -1,0 +1,92 @@
+{
+  // Batch Builder - VS Code tasks.
+  //
+  // Run any of these with:  Terminal > Run Task...   (or Ctrl+Shift+P then
+  // "Tasks: Run Task"). "Build the .exe" is also bound to Ctrl+Shift+B.
+  //
+  // Every task shells out to the same .ps1 scripts you can run by hand, so
+  // nothing here is VS Code-only magic.
+  "version": "2.0.0",
+  "tasks": [
+    {
+      // START HERE on a new machine. Creates .venv, installs the bundled
+      // wheels (no internet needed) and runs the tests.
+      "label": "1. Setup (run this first)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/setup.ps1"
+      ],
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      // The full suite. The golden tests here are what guarantee the Tox4
+      // files Ascent already reads have not changed.
+      "label": "2. Run tests",
+      "type": "shell",
+      "command": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "args": ["-m", "pytest", "-q"],
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      // Run from source against the real Apollo database. Use this on the lab
+      // network to confirm everything works before packaging.
+      "label": "3. Run the app (live Apollo)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/run.ps1"
+      ],
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      // Run with recorded data instead of the database. Works anywhere, including
+      // off the lab network - useful for demos and for checking the interface.
+      "label": "3b. Run the app (demo, no database)",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/run.ps1",
+        "--demo"
+      ],
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      // Tests, then PyInstaller, then a smoke test of the binary it produced.
+      // Output: build\dist\BatchBuilder\
+      "label": "4. Build the .exe",
+      "type": "shell",
+      "command": "powershell",
+      "args": [
+        "-NoProfile",
+        "-ExecutionPolicy", "Bypass",
+        "-File", "${workspaceFolder}/build/build.ps1"
+      ],
+      "group": { "kind": "build", "isDefault": true },
+      "problemMatcher": [],
+      "presentation": { "reveal": "always", "panel": "dedicated" }
+    },
+    {
+      // Opens the folder the build produced, so you can copy it to the share.
+      "label": "5. Open the build output folder",
+      "type": "shell",
+      "command": "explorer",
+      "args": ["${workspaceFolder}\\build\\dist\\BatchBuilder"],
+      "problemMatcher": [],
+      "presentation": { "reveal": "silent", "panel": "shared" }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# Generated batch output and analyst input
+ins_files/
+hamilton files/
+
+# PyInstaller
+build/dist/
+build/work/
+*.spec.bak
+
+# Local overrides
+batchbuilder.json
+
+# Dev scratch
+src/batchbuilder/static/_devfixture.xls
+
+# Vendored wheels: shipped in the emailed zip, not tracked here
+vendor/wheels/*.whl
+vendor/wheels/*.tar.gz

@@ -1,0 +1,44 @@
+{
+  // Batch Builder - workspace settings.
+  //
+  // These apply only to this folder. Nothing here changes your global VS Code
+  // configuration or affects any other project.
+
+  // Use the project's own virtual environment, not whatever Python is on PATH.
+  // If VS Code says it cannot find it, run setup.bat first, then reload the
+  // window (Ctrl+Shift+P > "Developer: Reload Window").
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+
+  // Test Explorer integration: tests appear in the beaker icon in the sidebar
+  // and can be run or debugged individually.
+  "python.testing.pytestEnabled": true,
+  "python.testing.unittestEnabled": false,
+  "python.testing.pytestArgs": ["tests"],
+
+  // The package lives in src\, so editors and the test runner need it on the
+  // import path to resolve `import batchbuilder`.
+  "python.analysis.extraPaths": ["${workspaceFolder}/src", "${workspaceFolder}/tests"],
+  "python.autoComplete.extraPaths": ["${workspaceFolder}/src"],
+
+  // Keep generated and cached output out of the file tree and search results.
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/*.pyc": true
+  },
+  "search.exclude": {
+    "build/dist": true,
+    "build/work": true,
+    "vendor/wheels": true,
+    ".venv": true
+  },
+
+  // The batch files this project generates are tab-delimited with CRLF line
+  // endings. That is not cosmetic - it is the format Ascent reads - so do not
+  // let the editor helpfully "fix" whitespace in them.
+  "[plaintext]": {
+    "files.trimTrailingWhitespace": false,
+    "files.insertFinalNewline": false
+  },
+  "files.eol": "\r\n"
+}

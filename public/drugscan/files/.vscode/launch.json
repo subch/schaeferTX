@@ -1,0 +1,68 @@
+{
+  // Batch Builder - debug configurations.
+  //
+  // Press F5 with one of these selected in the Run and Debug panel. Breakpoints
+  // work normally. Requires the Python extension (VS Code will offer to install
+  // it; see extensions.json).
+  //
+  // These need setup to have been run first, so .venv exists.
+  "version": "0.2.0",
+  "configurations": [
+    {
+      // Runs the app under the debugger against the live Apollo database.
+      "name": "Run app (live Apollo)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "batchbuilder",
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" }
+    },
+    {
+      // Same, but with recorded data - works with no database access.
+      "name": "Run app (demo, no database)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "batchbuilder",
+      "args": ["--demo", "${workspaceFolder}/tests/fixtures/apollo_fixture.json"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" }
+    },
+    {
+      // Fixed port, no browser - handy when you want to keep one tab open and
+      // restart the server repeatedly.
+      "name": "Run app (port 8765, no browser)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "batchbuilder",
+      "args": ["--port", "8765", "--no-browser"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": { "PYTHONPATH": "${workspaceFolder}/src" }
+    },
+    {
+      // Debug the whole test suite.
+      "name": "Debug all tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": { "PYTHONPATH": "${workspaceFolder}/src;${workspaceFolder}/tests" }
+    },
+    {
+      // Debug just the file you currently have open. Useful for a single test
+      // file while you are working on it.
+      "name": "Debug the current test file",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "args": ["-q", "${file}"],
+      "console": "integratedTerminal",
+      "justMyCode": false,
+      "env": { "PYTHONPATH": "${workspaceFolder}/src;${workspaceFolder}/tests" }
+    }
+  ]
+}

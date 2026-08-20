@@ -1,0 +1,101 @@
+% header=SampleName	SampleID	Type	Comments	AcqMethod	ProcMethod	RackCode	PlateCode	VialPos	SmplInjVol	DilutFact	WghtToVol	RackPos	PlatePos	SetName	OutputFile	_Instrument	_Lot	_Level	_PlateID	_QCNAME
+NEG1	Neg QC	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	48	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-001	LC_13	NEG	NEG	Barcode05	NEG
+Cutoff Cal	Cutoff Cal	Standard		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	72	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-002	LC_13	CUTOFF	CUTOFF	Barcode05	
+Hydro QC	Hydro QC	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	60	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-003	LC_13	HYD	HYD	Barcode05	
+Low QC	Low QC	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	84	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-004	LC_13	QLOW	QLOW	Barcode05	
+High QC	High QC	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	96	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-005	LC_13	QHIGH	QHIGH	Barcode05	
+WASH-1	WASH-1	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	48	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-006	LC_13	NEG	NEG	Barcode05	NEG
+Sample Barcode01	Sample Barcode01	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	1	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-007	LC_13			Barcode05	
+Sample Barcode02	Sample Barcode02	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	13	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-008	LC_13			Barcode05	
+Sample Barcode03	Sample Barcode03	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	25	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-009	LC_13			Barcode05	
+Sample Barcode04	Sample Barcode04	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	37	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-010	LC_13			Barcode05	
+Sample Barcode05	Sample Barcode05	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	49	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-011	LC_13			Barcode05	
+Sample Barcode06	Sample Barcode06	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	61	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-012	LC_13			Barcode05	
+Sample Barcode07	Sample Barcode07	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	73	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-013	LC_13			Barcode05	
+Sample Barcode08	Sample Barcode08	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	85	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-014	LC_13			Barcode05	
+Sample Barcode09	Sample Barcode09	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	2	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-015	LC_13			Barcode05	
+Sample Barcode10	Sample Barcode10	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	14	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-016	LC_13			Barcode05	
+Sample Barcode11	Sample Barcode11	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	26	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-017	LC_13			Barcode05	
+Sample Barcode12	Sample Barcode12	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	38	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-018	LC_13			Barcode05	
+Sample Barcode13	Sample Barcode13	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	50	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-019	LC_13			Barcode05	
+Sample Barcode14	Sample Barcode14	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	62	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-020	LC_13			Barcode05	
+Sample Barcode15	Sample Barcode15	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	74	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-021	LC_13			Barcode05	
+Sample Barcode16	Sample Barcode16	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	86	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-022	LC_13			Barcode05	
+Sample Barcode17	Sample Barcode17	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	3	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-023	LC_13			Barcode05	
+Sample Barcode18	Sample Barcode18	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	15	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-024	LC_13			Barcode05	
+Sample Barcode19	Sample Barcode19	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	27	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-025	LC_13			Barcode05	
+Sample Barcode20	Sample Barcode20	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	39	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-026	LC_13			Barcode05	
+Sample Barcode21	Sample Barcode21	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	51	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-027	LC_13			Barcode05	
+Sample Barcode22	Sample Barcode22	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	63	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-028	LC_13			Barcode05	
+Sample Barcode23	Sample Barcode23	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	75	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-029	LC_13			Barcode05	
+Sample Barcode24	Sample Barcode24	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	87	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-030	LC_13			Barcode05	
+Sample Barcode25	Sample Barcode25	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	4	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-031	LC_13			Barcode05	
+Sample Barcode26	Sample Barcode26	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	16	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-032	LC_13			Barcode05	
+Sample Barcode27	Sample Barcode27	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	28	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-033	LC_13			Barcode05	
+Sample Barcode28	Sample Barcode28	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	40	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-034	LC_13			Barcode05	
+Sample Barcode29	Sample Barcode29	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	52	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-035	LC_13			Barcode05	
+Sample Barcode30	Sample Barcode30	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	64	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-036	LC_13			Barcode05	
+Sample Barcode31	Sample Barcode31	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	76	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-037	LC_13			Barcode05	
+Sample Barcode32	Sample Barcode32	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	88	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-038	LC_13			Barcode05	
+Sample Barcode33	Sample Barcode33	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	5	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-039	LC_13			Barcode05	
+Sample Barcode34	Sample Barcode34	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	17	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-040	LC_13			Barcode05	
+Sample Barcode35	Sample Barcode35	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	29	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-041	LC_13			Barcode05	
+Sample Barcode36	Sample Barcode36	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	41	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-042	LC_13			Barcode05	
+Sample Barcode37	Sample Barcode37	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	53	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-043	LC_13			Barcode05	
+Sample Barcode38	Sample Barcode38	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	65	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-044	LC_13			Barcode05	
+Sample Barcode39	Sample Barcode39	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	77	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-045	LC_13			Barcode05	
+Sample Barcode40	Sample Barcode40	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	89	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-046	LC_13			Barcode05	
+Sample Barcode41	Sample Barcode41	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	6	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-047	LC_13			Barcode05	
+Sample Barcode42	Sample Barcode42	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	18	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-048	LC_13			Barcode05	
+Sample Barcode43	Sample Barcode43	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	30	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-049	LC_13			Barcode05	
+Sample Barcode44	Sample Barcode44	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	42	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-050	LC_13			Barcode05	
+Sample Barcode45	Sample Barcode45	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	54	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-051	LC_13			Barcode05	
+Sample Barcode46	Sample Barcode46	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	66	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-052	LC_13			Barcode05	
+Sample Barcode47	Sample Barcode47	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	78	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-053	LC_13			Barcode05	
+Sample Barcode48	Sample Barcode48	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	90	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-054	LC_13			Barcode05	
+Sample Barcode49	Sample Barcode49	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	7	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-055	LC_13			Barcode05	
+Sample Barcode50	Sample Barcode50	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	19	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-056	LC_13			Barcode05	
+Sample Barcode51	Sample Barcode51	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	31	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-057	LC_13			Barcode05	
+Sample Barcode52	Sample Barcode52	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	43	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-058	LC_13			Barcode05	
+Sample Barcode53	Sample Barcode53	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	55	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-059	LC_13			Barcode05	
+Sample Barcode54	Sample Barcode54	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	67	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-060	LC_13			Barcode05	
+Sample Barcode55	Sample Barcode55	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	79	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-061	LC_13			Barcode05	
+Sample Barcode56	Sample Barcode56	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	91	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-062	LC_13			Barcode05	
+Sample Barcode57	Sample Barcode57	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	8	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-063	LC_13			Barcode05	
+Sample Barcode58	Sample Barcode58	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	20	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-064	LC_13			Barcode05	
+Sample Barcode59	Sample Barcode59	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	32	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-065	LC_13			Barcode05	
+Sample Barcode60	Sample Barcode60	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	44	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-066	LC_13			Barcode05	
+Sample Barcode61	Sample Barcode61	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	56	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-067	LC_13			Barcode05	
+Sample Barcode62	Sample Barcode62	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	68	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-068	LC_13			Barcode05	
+Sample Barcode63	Sample Barcode63	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	80	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-069	LC_13			Barcode05	
+Sample Barcode64	Sample Barcode64	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	92	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-070	LC_13			Barcode05	
+Sample Barcode65	Sample Barcode65	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	9	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-071	LC_13			Barcode05	
+Sample Barcode66	Sample Barcode66	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	21	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-072	LC_13			Barcode05	
+Sample Barcode67	Sample Barcode67	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	33	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-073	LC_13			Barcode05	
+Sample Barcode68	Sample Barcode68	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	45	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-074	LC_13			Barcode05	
+Sample Barcode69	Sample Barcode69	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	57	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-075	LC_13			Barcode05	
+Sample Barcode70	Sample Barcode70	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	69	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-076	LC_13			Barcode05	
+Sample Barcode71	Sample Barcode71	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	81	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-077	LC_13			Barcode05	
+Sample Barcode72	Sample Barcode72	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	93	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-078	LC_13			Barcode05	
+Sample Barcode73	Sample Barcode73	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	10	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-079	LC_13			Barcode05	
+Sample Barcode74	Sample Barcode74	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	22	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-080	LC_13			Barcode05	
+Sample Barcode75	Sample Barcode75	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	34	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-081	LC_13			Barcode05	
+Sample Barcode76	Sample Barcode76	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	46	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-082	LC_13			Barcode05	
+Sample Barcode77	Sample Barcode77	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	58	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-083	LC_13			Barcode05	
+Sample Barcode78	Sample Barcode78	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	70	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-084	LC_13			Barcode05	
+Sample Barcode79	Sample Barcode79	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	82	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-085	LC_13			Barcode05	
+Sample Barcode80	Sample Barcode80	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	94	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-086	LC_13			Barcode05	
+Sample Barcode81	Sample Barcode81	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	11	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-087	LC_13			Barcode05	
+Sample Barcode82	Sample Barcode82	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	23	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-088	LC_13			Barcode05	
+Sample Barcode83	Sample Barcode83	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	35	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-089	LC_13			Barcode05	
+Sample Barcode84	Sample Barcode84	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	47	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-090	LC_13			Barcode05	
+Sample Barcode85	Sample Barcode85	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	59	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-091	LC_13			Barcode05	
+Sample Barcode86	Sample Barcode86	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	71	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-092	LC_13			Barcode05	
+Sample Barcode87	Sample Barcode87	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	83	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-093	LC_13			Barcode05	
+Sample Barcode88	Sample Barcode88	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	95	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-094	LC_13			Barcode05	
+Sample Barcode89	Sample Barcode89	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	12	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-095	LC_13			Barcode05	
+Sample Barcode90	Sample Barcode90	Unknown		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	24	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-096	LC_13			Barcode05	
+WASH-2	WASH-2	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	48	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-097	LC_13	NEG	NEG	Barcode05	NEG
+Low QC	Low QC	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	84	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-098	LC_13	QLOW	QLOW	Barcode05	
+High QC	High QC	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	96	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-099	LC_13	QHIGH	QHIGH	Barcode05	
+WASH-3	WASH-3	QC		TO6_Str1.dam	none	Deep Well MTP 96 Cooled	Deep Well MTP 96 Cooled	48	10	1	0	1	2	SET1	Barcode05_Qual_819_TO6_Str1_LC_13-100	LC_13	NEG	NEG	Barcode05	NEG
