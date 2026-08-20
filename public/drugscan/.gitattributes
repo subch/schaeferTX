@@ -1,8 +1,4 @@
-# Everything under /drugscan is published byte-for-byte.
-#
-# The Ascent batch files in tests/fixtures/expected are CRLF, and that is part
-# of the format the instrument reads - the golden tests compare them byte for
-# byte. Git's autocrlf would normalise them to LF in the index, and the Linux
-# runner that builds this site would then check out LF and serve broken
-# fixtures. Marking the tree as non-text disables all end-of-line conversion.
+# Published byte-for-byte. The Ascent batch files under
+# tests/fixtures/expected are CRLF and the golden tests compare bytes;
+# end-of-line conversion would corrupt them.
 * -text

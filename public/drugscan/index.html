@@ -4,220 +4,547 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="robots" content="noindex, nofollow">
-<title>Batch Builder - source</title>
+<title>Batch Builder - Claude Code handoff</title>
 <style>
   :root {
     --bg:#f6f7f9; --panel:#fff; --ink:#16202e; --soft:#5b6b80;
-    --line:#dfe4ec; --accent:#1f5fa9; --warn-bg:#fdf3e0; --warn-ink:#7a5209;
+    --line:#dfe4ec; --accent:#1f5fa9; --accent-ink:#fff;
+    --note-bg:#eef3fa; --note-ink:#24486f;
+    --warn-bg:#fdf3e0; --warn-ink:#7a5209; --code-bg:#f0f2f6;
   }
   @media (prefers-color-scheme: dark) {
     :root { --bg:#10151c; --panel:#18202b; --ink:#e6ecf5; --soft:#93a3b8;
-            --line:#26313f; --accent:#5b9ee0; --warn-bg:#33270f;
-            --warn-ink:#e2b263; }
+            --line:#26313f; --accent:#5b9ee0; --note-bg:#16232f;
+            --note-ink:#a8c8e8; --warn-bg:#33270f; --warn-ink:#e2b263;
+            --code-bg:#111820; }
   }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--ink);
-         font:16px/1.6 "Segoe UI",system-ui,-apple-system,sans-serif; }
-  .wrap { max-width:860px; margin:0 auto; padding:40px 20px 80px; }
-  h1 { font-size:26px; margin:0 0 4px; }
-  .sub { color:var(--soft); margin:0 0 28px; }
-  h2 { font-size:18px; margin:34px 0 12px; }
-  h3 { font-size:15px; margin:22px 0 8px; }
-  h3 em { color:var(--soft); font-style:normal; font-weight:400; font-size:13px; }
-  .card { background:var(--panel); border:1px solid var(--line);
-          border-radius:10px; padding:18px 20px; margin-bottom:18px; }
-  .warn { background:var(--warn-bg); color:var(--warn-ink);
-          border-color:transparent; }
-  .warn strong { display:block; margin-bottom:4px; }
-  ol { padding-left:20px; } ol li { margin-bottom:10px; }
-  code, pre { font-family:Consolas,"SF Mono",Menlo,monospace; font-size:13.5px; }
-  pre { background:var(--bg); border:1px solid var(--line); border-radius:7px;
-        padding:11px 13px; overflow-x:auto; margin:8px 0; }
-  code { background:var(--bg); padding:1px 5px; border-radius:4px; }
+         font:16px/1.65 "Segoe UI",system-ui,-apple-system,sans-serif; }
+  .wrap { max-width:840px; margin:0 auto; padding:36px 20px 90px; }
+
+  .masthead { border-bottom:1px solid var(--line); padding-bottom:22px;
+              margin-bottom:26px; }
+  .masthead h1 { font-size:25px; margin:0 0 6px; }
+  .masthead p { color:var(--soft); margin:0; }
+
+  .actions { display:flex; flex-wrap:wrap; gap:10px; margin:20px 0 4px; }
+  .btn { display:inline-block; padding:10px 17px; border-radius:8px;
+         text-decoration:none; font-weight:600; font-size:14.5px;
+         border:1px solid var(--line); background:var(--panel);
+         color:var(--ink); }
+  .btn-primary { background:var(--accent); border-color:var(--accent);
+                 color:var(--accent-ink); }
+  .btn span { font-weight:400; opacity:.85; }
+
+  .howto { background:var(--note-bg); color:var(--note-ink);
+           border-radius:10px; padding:16px 19px; margin:22px 0 30px;
+           font-size:14.5px; }
+  .howto strong { display:block; margin-bottom:5px; }
+  .howto ol { margin:8px 0 0; padding-left:20px; }
+  .howto li { margin-bottom:5px; }
+
+  article h1 { font-size:23px; margin:34px 0 10px; padding-top:8px; }
+  article h2 { font-size:19px; margin:32px 0 10px; padding-top:14px;
+               border-top:1px solid var(--line); }
+  article h3 { font-size:16px; margin:22px 0 8px; }
+  article p { margin:0 0 13px; }
+  article ul, article ol { padding-left:22px; margin:0 0 13px; }
+  article li { margin-bottom:6px; }
+  article blockquote { margin:16px 0; padding:12px 16px;
+                       background:var(--warn-bg); color:var(--warn-ink);
+                       border-radius:8px; }
+  article blockquote p:last-child { margin-bottom:0; }
+  article table { border-collapse:collapse; width:100%; margin:0 0 16px;
+                  font-size:14px; display:block; overflow-x:auto; }
+  article th, article td { border:1px solid var(--line); padding:7px 11px;
+                           text-align:left; vertical-align:top; }
+  article th { background:var(--panel); font-weight:600; }
+  article hr { border:0; border-top:1px solid var(--line); margin:30px 0; }
+  code, pre { font-family:Consolas,"SF Mono",Menlo,monospace; }
+  code { background:var(--code-bg); padding:1.5px 5px; border-radius:4px;
+         font-size:13.5px; }
+  pre { background:var(--code-bg); border:1px solid var(--line);
+        border-radius:8px; padding:12px 14px; overflow-x:auto;
+        margin:0 0 15px; font-size:13.5px; line-height:1.5; }
   pre code { background:none; padding:0; }
-  ul.files { list-style:none; padding:0; margin:0;
+
+  h2.files-heading { font-size:19px; margin:38px 0 6px; padding-top:16px;
+                     border-top:1px solid var(--line); }
+  h3 em { color:var(--soft); font-style:normal; font-weight:400; font-size:13px; }
+  ul.files { list-style:none; padding:0; margin:0 0 18px;
              border:1px solid var(--line); border-radius:8px; overflow:hidden; }
   ul.files li { display:flex; justify-content:space-between; gap:12px;
-                padding:7px 13px; border-bottom:1px solid var(--line);
-                background:var(--panel); font-size:13.5px; }
+                padding:6px 13px; border-bottom:1px solid var(--line);
+                background:var(--panel); font-size:13px; }
   ul.files li:last-child { border-bottom:0; }
   ul.files a { color:var(--accent); text-decoration:none; word-break:break-all;
                font-family:Consolas,monospace; }
   ul.files a:hover { text-decoration:underline; }
   ul.files span { color:var(--soft); font-size:12px; white-space:nowrap; }
-  .dl { display:inline-block; background:var(--accent); color:#fff;
-        padding:10px 18px; border-radius:8px; text-decoration:none;
-        font-weight:600; }
-  .dl span { font-weight:400; opacity:.85; }
-  footer { margin-top:44px; padding-top:18px; border-top:1px solid var(--line);
+
+  footer { margin-top:46px; padding-top:18px; border-top:1px solid var(--line);
            color:var(--soft); font-size:13px; }
 </style>
 </head>
 <body>
 <div class="wrap">
 
-  <h1>Batch Builder</h1>
-  <p class="sub">Hamilton plate workbook &rarr; Ascent batch files. Source, for
-  building on the lab network.</p>
-
-  <div class="card warn">
-    <strong>This is a sanitised copy.</strong>
-    Database credentials, server names, batch numbers and specimen identifiers
-    have been replaced with synthetic values. It runs and all tests pass, but it
-    will not reach a real database until you supply the real connection details
-    locally, as described in step&nbsp;3.
+  <div class="masthead">
+    <h1>Batch Builder</h1>
+    <p>Handoff brief for Claude Code, plus the full source.</p>
   </div>
 
-  <p><a class="dl" href="batch-builder-source.zip">Download everything
-  <span>&middot; 185 KB</span></a></p>
+  <div class="actions">
+    <a class="btn btn-primary" href="HANDOFF_TO_CLAUDE_CODE.md" download>Download the brief
+    <span>&middot; markdown</span></a>
+    <a class="btn" href="batch-builder-source.zip">Download the source
+    <span>&middot; 191 KB</span></a>
+  </div>
 
-  <h2>Getting it running</h2>
-  <div class="card">
+  <div class="howto">
+    <strong>Using this on the work machine</strong>
     <ol>
-      <li><strong>Get the files.</strong> Use the download button above, or grab
-      individual files from the list below. Keep the folder layout: the tests
-      and the build both rely on it.</li>
-
-      <li><strong>Set it up.</strong> Needs Python 3.10 or newer.
-      <pre><code>python make.py setup</code></pre>
-      Creates an isolated environment, installs dependencies and runs the test
-      suite. You should see <code>236 passed</code>. Nothing is installed
-      machine-wide.</li>
-
-      <li><strong>Add your connection details.</strong> Create
-      <code>batchbuilder.json</code> next to <code>make.py</code>:
-      <pre><code>{
-  "apollo": {
-    "server": "YOUR_SERVER\\INSTANCE",
-    "database": "YOUR_DATABASE",
-    "uid": "YOUR_USER",
-    "pwd": "YOUR_PASSWORD"
-  }
-}</code></pre>
-      Anything you put here overrides the placeholders in the source. This file
-      is git-ignored and is not part of the download.</li>
-
-      <li><strong>Try it.</strong>
-      <pre><code>python make.py run</code></pre>
-      Starts a local web page in your browser. It runs on 127.0.0.1 only &mdash;
-      nothing is exposed on the network. Add <code>--demo</code> to try the
-      interface with no database at all.</li>
-
-      <li><strong>Build the executable</strong>, once you are happy it works.
-      <pre><code>python make.py build</code></pre>
-      Produces <code>build/dist/BatchBuilder/</code>. Copy that
-      <em>entire folder</em> to wherever analysts run it from &mdash; the .exe
-      needs the <code>_internal</code> folder beside it.</li>
+      <li>Download the brief above and attach the <code>.md</code> to a Claude
+      Code conversation &mdash; or paste this page's text in.</li>
+      <li>Tell it: <em>&ldquo;follow this brief and get Batch Builder
+      built&rdquo;</em>.</li>
+      <li>It will ask for the source and for the Apollo connection details.
+      Point it at this page, or hand it the zip.</li>
     </ol>
-    <p style="margin-bottom:0"><code>python make.py</code> lists every task.
-    <code>python make.py doctor</code> reports what is installed and what is
-    missing without changing anything. Full detail, including troubleshooting,
-    is in <a href="files/BUILD.md">BUILD.md</a>.</p>
   </div>
 
-  <h2>Files <em style="color:var(--soft);font-style:normal;font-size:13px">
-  (67)</em></h2>
-    <section>
-      <h3>Start here <em>(3)</em></h3>
-      <ul class="files">
-        <li><a href="files/BUILD.md">BUILD.md</a><span>9 KB</span></li>
-        <li><a href="files/make.py">make.py</a><span>14 KB</span></li>
-        <li><a href="files/README.md">README.md</a><span>15 KB</span></li>
-      </ul>
-    </section>
-    <section>
-      <h3>Application <em>(18)</em></h3>
-      <ul class="files">
-        <li><a href="files/src/batchbuilder/__init__.py">src/batchbuilder/__init__.py</a><span>119 B</span></li>
-        <li><a href="files/src/batchbuilder/__main__.py">src/batchbuilder/__main__.py</a><span>7 KB</span></li>
-        <li><a href="files/src/batchbuilder/apollo.py">src/batchbuilder/apollo.py</a><span>9 KB</span></li>
-        <li><a href="files/src/batchbuilder/config.py">src/batchbuilder/config.py</a><span>8 KB</span></li>
-        <li><a href="files/src/batchbuilder/controls.py">src/batchbuilder/controls.py</a><span>6 KB</span></li>
-        <li><a href="files/src/batchbuilder/generator.py">src/batchbuilder/generator.py</a><span>15 KB</span></li>
-        <li><a href="files/src/batchbuilder/generator_tox6.py">src/batchbuilder/generator_tox6.py</a><span>9 KB</span></li>
-        <li><a href="files/src/batchbuilder/hamilton.py">src/batchbuilder/hamilton.py</a><span>7 KB</span></li>
-        <li><a href="files/src/batchbuilder/models.py">src/batchbuilder/models.py</a><span>7 KB</span></li>
-        <li><a href="files/src/batchbuilder/positions.py">src/batchbuilder/positions.py</a><span>2 KB</span></li>
-        <li><a href="files/src/batchbuilder/readers.py">src/batchbuilder/readers.py</a><span>4 KB</span></li>
-        <li><a href="files/src/batchbuilder/report.py">src/batchbuilder/report.py</a><span>3 KB</span></li>
-        <li><a href="files/src/batchbuilder/service.py">src/batchbuilder/service.py</a><span>9 KB</span></li>
-        <li><a href="files/src/batchbuilder/static/app.css">src/batchbuilder/static/app.css</a><span>10 KB</span></li>
-        <li><a href="files/src/batchbuilder/static/app.js">src/batchbuilder/static/app.js</a><span>16 KB</span></li>
-        <li><a href="files/src/batchbuilder/templates/index.html">src/batchbuilder/templates/index.html</a><span>7 KB</span></li>
-        <li><a href="files/src/batchbuilder/validation.py">src/batchbuilder/validation.py</a><span>11 KB</span></li>
-        <li><a href="files/src/batchbuilder/webapp.py">src/batchbuilder/webapp.py</a><span>11 KB</span></li>
-      </ul>
-    </section>
-    <section>
-      <h3>Tests <em>(18)</em></h3>
-      <ul class="files">
-        <li><a href="files/tests/conftest.py">tests/conftest.py</a><span>1 KB</span></li>
-        <li><a href="files/tests/fixtures/apollo_fixture.json">tests/fixtures/apollo_fixture.json</a><span>5 KB</span></li>
-        <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Combo.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Combo.xls</a><span>30 KB</span></li>
-        <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Qual.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Qual.xls</a><span>30 KB</span></li>
-        <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Quant.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Quant.xls</a><span>30 KB</span></li>
-        <li><a href="files/tests/fixtures/expected/abc1234_500101_500102_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500101_500102_619_TO4_Str1_LC_13.txt</a><span>19 KB</span></li>
-        <li><a href="files/tests/fixtures/expected/abc1234_500101_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500101_619_TO4_Str1_LC_13.txt</a><span>9 KB</span></li>
-        <li><a href="files/tests/fixtures/expected/abc1234_500102_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500102_619_TO4_Str1_LC_13.txt</a><span>13 KB</span></li>
-        <li><a href="files/tests/fixtures/tox4_sample_plate.xls">tests/fixtures/tox4_sample_plate.xls</a><span>182 KB</span></li>
-        <li><a href="files/tests/test_config.py">tests/test_config.py</a><span>3 KB</span></li>
-        <li><a href="files/tests/test_frontend.py">tests/test_frontend.py</a><span>7 KB</span></li>
-        <li><a href="files/tests/test_golden.py">tests/test_golden.py</a><span>3 KB</span></li>
-        <li><a href="files/tests/test_hamilton.py">tests/test_hamilton.py</a><span>7 KB</span></li>
-        <li><a href="files/tests/test_launcher.py">tests/test_launcher.py</a><span>5 KB</span></li>
-        <li><a href="files/tests/test_service.py">tests/test_service.py</a><span>5 KB</span></li>
-        <li><a href="files/tests/test_tox6.py">tests/test_tox6.py</a><span>15 KB</span></li>
-        <li><a href="files/tests/test_validation.py">tests/test_validation.py</a><span>5 KB</span></li>
-        <li><a href="files/tests/test_webapp.py">tests/test_webapp.py</a><span>15 KB</span></li>
-      </ul>
-    </section>
-    <section>
-      <h3>Packaging <em>(7)</em></h3>
-      <ul class="files">
-        <li><a href="files/build/batchbuilder.spec">build/batchbuilder.spec</a><span>2 KB</span></li>
-        <li><a href="files/build/build.ps1">build/build.ps1</a><span>6 KB</span></li>
-        <li><a href="files/build/derive_fixture.py">build/derive_fixture.py</a><span>3 KB</span></li>
-        <li><a href="files/build/entry.py">build/entry.py</a><span>1 KB</span></li>
-        <li><a href="files/build/make_email_zip.py">build/make_email_zip.py</a><span>6 KB</span></li>
-        <li><a href="files/build/reference_impl.py">build/reference_impl.py</a><span>13 KB</span></li>
-        <li><a href="files/build/validate_fixture.py">build/validate_fixture.py</a><span>2 KB</span></li>
-      </ul>
-    </section>
-    <section>
-      <h3>Reference and examples <em>(6)</em></h3>
-      <ul class="files">
-        <li><a href="files/mockups/tox6/Barcode05_Combo_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Combo_819_TO6_Str1_LC_13.txt</a><span>19 KB</span></li>
-        <li><a href="files/mockups/tox6/Barcode05_Qual_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Qual_819_TO6_Str1_LC_13.txt</a><span>18 KB</span></li>
-        <li><a href="files/mockups/tox6/Barcode05_Quant_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Quant_819_TO6_Str1_LC_13.txt</a><span>19 KB</span></li>
-        <li><a href="files/mockups/tox6/README.md">mockups/tox6/README.md</a><span>3 KB</span></li>
-        <li><a href="files/reference/bb_v1.py">reference/bb_v1.py</a><span>34 KB</span></li>
-        <li><a href="files/vendor/README.md">vendor/README.md</a><span>1 KB</span></li>
-      </ul>
-    </section>
-    <section>
-      <h3>Project files <em>(15)</em></h3>
-      <ul class="files">
-        <li><a href="files/.gitignore">.gitignore</a><span>396 B</span></li>
-        <li><a href="files/.vscode/extensions.json">.vscode/extensions.json</a><span>225 B</span></li>
-        <li><a href="files/.vscode/launch.json">.vscode/launch.json</a><span>2 KB</span></li>
-        <li><a href="files/.vscode/settings.json">.vscode/settings.json</a><span>2 KB</span></li>
-        <li><a href="files/.vscode/tasks.json">.vscode/tasks.json</a><span>3 KB</span></li>
-        <li><a href="files/batchbuilder.example.json">batchbuilder.example.json</a><span>2 KB</span></li>
-        <li><a href="files/build.bat">build.bat</a><span>424 B</span></li>
-        <li><a href="files/CHANGELOG.md">CHANGELOG.md</a><span>12 KB</span></li>
-        <li><a href="files/pytest.ini">pytest.ini</a><span>91 B</span></li>
-        <li><a href="files/requirements-dev.txt">requirements-dev.txt</a><span>89 B</span></li>
-        <li><a href="files/requirements.txt">requirements.txt</a><span>65 B</span></li>
-        <li><a href="files/run.bat">run.bat</a><span>471 B</span></li>
-        <li><a href="files/run.ps1">run.ps1</a><span>2 KB</span></li>
-        <li><a href="files/setup.bat">setup.bat</a><span>562 B</span></li>
-        <li><a href="files/setup.ps1">setup.ps1</a><span>7 KB</span></li>
-      </ul>
-    </section>
+  <article>
+<h1 id="batch-builder-handoff-to-claude-code">Batch Builder — handoff to Claude Code</h1>
+<p><strong>You are Claude Code running on Travis's work machine at a clinical toxicology
+laboratory.</strong> This document is the complete brief for getting the Batch Builder
+application built, verified and deployed there. Read all of it before acting.</p>
+<p>Travis wrote this tool. It converts a Hamilton liquid-handler plate workbook
+into Ascent batch files — the sequence file the LC-MS/MS instrument loads to
+know what to inject and in what order. It replaces an older single-file Tkinter
+script (<code>reference/bb_v1.py</code>, kept for comparison).</p>
+<hr />
+<h2 id="ground-rules">Ground rules</h2>
+<p><strong>1. Tox4 output is a live contract. Do not change it.</strong></p>
+<p>Ascent already consumes these files in production. <code>tests/test_golden.py</code>
+regenerates three real batch files and compares them <strong>byte for byte</strong>, CRLF
+line endings included. If that test fails, something is genuinely broken.</p>
+<blockquote>
+<p><strong>Never</strong> update the files in <code>tests/fixtures/expected/</code> to make a test pass.
+If the laboratory decides the format should change, that is a separate,
+deliberately reviewed change with regenerated golden files.</p>
+</blockquote>
+<p><strong>2. Several things in the output look like bugs and are reproduced on purpose.</strong></p>
+<p>Do not "fix" any of these:</p>
+<ul>
+<li>The first QC block is numbered <code>QC2</code>–<code>QC5</code> while later blocks are <code>QC1</code>–<code>QC4</code>.
+  <code>QC_HYD</code> contains the substring <code>QC</code>, so it advances the level counter even
+  though it is labelled <code>HYD</code>.</li>
+<li>The per-MBN files carry the <em>combined</em> file's stem in their <code>OutputFile</code>
+  column, not their own.</li>
+<li>The MBN 2 file restarts its injection counter at 1 for the opening block, then
+  jumps to where the combined file left off for its samples.</li>
+<li><code>2x DW96</code> is only ever selected by instrument <code>LC_7</code>. The original also tested
+  <code>"TOX3" in method</code>, a string none of its method options could contain, so that
+  branch has never fired. Preserved as <code>settings.alt_methods: []</code>.</li>
+</ul>
+<p><strong>3. The application must start and run without the database.</strong></p>
+<p>Apollo lives on the lab network. The app is required to come up on a machine
+that cannot reach it, so a plate file can still be loaded, inspected and checked.
+Never make startup wait on, or fail because of, a database connection.</p>
+<p><strong>4. Ask Travis before changing generator logic.</strong> Almost everything else —
+UI, packaging, docs, tests — is fair game.</p>
+<hr />
+<h2 id="step-0-check-the-environment">Step 0 — Check the environment</h2>
+<pre><code class="language-bash">python make.py doctor
+</code></pre>
+<p>Reports Python version, virtual environment, bundled wheels and whether PyPI is
+reachable. Changes nothing. If <code>python</code> is not found, try <code>py</code>; Python <strong>3.10 or
+newer</strong> is required.</p>
+<hr />
+<h2 id="step-1-get-the-source">Step 1 — Get the source</h2>
+<p>Ask Travis which applies:</p>
+<ul>
+<li><strong>He has attached the files or a zip to this conversation</strong> — write them to a
+  working folder, e.g. <code>C:\dev\batch-builder</code>, preserving the directory layout
+  exactly. The tests and the build both depend on it.</li>
+<li><strong>The machine can reach <code>https://schaefertx.com/APOLLO_PASSWORD/</code></strong> — the full source
+  is published there as individual files and as
+  <code>batch-builder-source.zip</code>. That copy is <em>sanitised</em>: credentials, server
+  names, batch numbers and specimen identifiers are synthetic placeholders. It
+  runs and all tests pass; see Step 3 for supplying the real values.</li>
+</ul>
+<p>Either way you should end up with roughly this:</p>
+<pre><code>make.py                one entry point for every task
+src/batchbuilder/      the application
+tests/                 236 tests, including the golden files
+build/                 PyInstaller spec, entry point, packaging
+vendor/wheels/         dependencies for offline install (may be absent)
+BUILD.md               human-facing build guide
+README.md              how the application works
+</code></pre>
+<hr />
+<h2 id="step-2-set-up">Step 2 — Set up</h2>
+<pre><code class="language-bash">python make.py setup
+</code></pre>
+<p>Creates <code>.venv</code> (nothing is installed machine-wide), installs dependencies, then
+runs the test suite.</p>
+<p><strong>Expected: <code>236 passed, 3 skipped</code>.</strong> If tests fail, stop and diagnose — do not
+proceed to a build.</p>
+<p>If dependency installation fails, the machine has no PyPI access and
+<code>vendor/wheels/</code> is missing. That folder cannot be emailed, because PyInstaller
+ships <code>.exe</code> bootloader files inside its own wheel. Tell Travis; he needs to move
+it across by another route (Drive, USB, internal mirror). Once it is in place at
+<code>vendor/wheels/</code>, re-run setup — it installs offline automatically.</p>
+<hr />
+<h2 id="step-3-supply-the-real-connection-details">Step 3 — Supply the real connection details</h2>
+<p>The published source carries placeholders, not credentials. <strong>Ask Travis for the
+Apollo server, instance, database, username and password.</strong> Do not guess them,
+and do not commit them anywhere.</p>
+<p>Create <code>batchbuilder.json</code> beside <code>make.py</code>:</p>
+<pre><code class="language-json">{
+  &quot;apollo&quot;: {
+    &quot;server&quot;: &quot;&lt;server&gt;\\&lt;instance&gt;&quot;,
+    &quot;database&quot;: &quot;&lt;database&gt;&quot;,
+    &quot;uid&quot;: &quot;&lt;username&gt;&quot;,
+    &quot;pwd&quot;: &quot;&lt;password&gt;&quot;
+  }
+}
+</code></pre>
+<p>Anything set here overrides the built-in values. The file is git-ignored.</p>
+<hr />
+<h2 id="step-4-verify-against-the-live-database">Step 4 — Verify against the live database</h2>
+<p>Do this <strong>before</strong> building. Running from source and running the packaged <code>.exe</code>
+execute identical code, so problems are far easier to diagnose here.</p>
+<pre><code class="language-bash">python make.py run
+</code></pre>
+<p>A browser opens on <code>127.0.0.1</code>. Confirm with Travis that:</p>
+<ul>
+<li>the page loads and the top right reads <strong>Apollo connected</strong></li>
+<li>dropping a Hamilton plate workbook draws the 96-well plate map</li>
+<li><strong>Check batch</strong> validates against a real MBN and reports sensible counts</li>
+</ul>
+<p><code>python make.py run --demo</code> exercises the whole interface with recorded data and
+no database, which is useful if Apollo is unreachable.</p>
+<hr />
+<h2 id="step-5-build">Step 5 — Build</h2>
+<pre><code class="language-bash">python make.py build
+</code></pre>
+<p>Runs the tests, packages with PyInstaller, then starts the executable it just
+produced to confirm it actually launches. Output: <code>build/dist/BatchBuilder/</code>,
+about 17 MB.</p>
+<hr />
+<h2 id="step-6-deploy">Step 6 — Deploy</h2>
+<p>Copy the <strong>entire <code>BatchBuilder</code> folder</strong> to wherever analysts run it from.</p>
+<blockquote>
+<p>The <code>.exe</code> alone will not work. It needs the <code>_internal</code> folder beside it,
+which holds the Python runtime, the page templates and the stylesheet.</p>
+</blockquote>
+<p>Analysts double-click <code>BatchBuilder.exe</code>. It starts a local web server on
+<code>127.0.0.1</code> and opens their browser. Nothing is exposed on the network, no ports
+are opened, and no hosting is involved — each person runs their own copy.</p>
+<hr />
+<h2 id="traps-that-have-already-bitten-this-project">Traps that have already bitten this project</h2>
+<p>Every one of these was a real failure, found and fixed. If you touch the
+relevant area, do not reintroduce them.</p>
+<p><strong>PyInstaller entry point.</strong> It runs its entry script as a top-level module with
+no package context. Pointing it at <code>src/batchbuilder/__main__.py</code> fails on that
+file's relative imports, <em>before</em> any error handling exists — the process dies
+and the user gets a browser tab spinning at nothing. The spec must point at
+<code>build/entry.py</code>. <code>make.py build</code> smoke-tests the binary with <code>--version</code>
+afterwards, so a build that compiles but cannot start is a build failure.</p>
+<p><strong>CRLF line endings.</strong> The Ascent batch files are CRLF and the golden tests
+compare bytes. Reading a golden file with <code>read_text()</code> applies universal-newline
+translation and silently converts it to LF. Read bytes and decode. Git will do
+the same thing via autocrlf unless a <code>.gitattributes</code> marks the tree <code>-text</code>.</p>
+<p><strong>The <code>hidden</code> attribute versus CSS.</strong> <code>[hidden]</code> gets <code>display: none</code> from the
+user-agent stylesheet, so any author rule with <code>display: flex</code> beats it. Several
+elements in the page are toggled with <code>hidden</code> <em>and</em> styled <code>display: flex</code>,
+which made the busy spinner permanently visible. <code>app.css</code> carries a
+<code>[hidden] { display: none !important; }</code> reset — leave it there. Note that
+<code>element.hidden</code> reads <code>true</code> even while CSS forces the element on screen, so
+verify with <code>getComputedStyle</code>, not DOM state.</p>
+<p><strong>Blocking on Apollo.</strong> Connecting to an unreachable SQL Server can take minutes,
+far longer than any login timeout, because name resolution happens first. The
+health check runs on a background thread and the request path fails fast when the
+probe already knows the server is down. Do not make any user-facing path wait on
+a connection.</p>
+<p><strong>ODBC drivers.</strong> The app prefers <em>ODBC Driver 18/17 for SQL Server</em> and falls
+back through older ones to the legacy <em>SQL Server</em> driver. That legacy driver
+rejects <code>TrustServerCertificate</code> outright rather than ignoring it, so the
+attribute is only sent to drivers that understand it. If only the legacy driver
+is present, suggest installing ODBC Driver 17 or 18.</p>
+<p><strong>Antivirus.</strong> PyInstaller output is frequently quarantined. This is a
+well-known false positive. Ask for the build folder or the resulting
+<code>BatchBuilder.exe</code> to be allow-listed — building on the machine rather than
+emailing an <code>.exe</code> already avoids the worst of it.</p>
+<hr />
+<h2 id="two-assays-and-what-is-still-provisional">Two assays, and what is still provisional</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>Input sheet</th>
+<th>Fill order</th>
+<th>Output</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Tox4</strong></td>
+<td><code>Report</code></td>
+<td>across rows (1, 2, 3 …)</td>
+<td>one file per MBN plus a combined file</td>
+</tr>
+<tr>
+<td><strong>Tox6</strong></td>
+<td><code>ReportMapping</code></td>
+<td>down columns (1, 13, 25 …)</td>
+<td>one file per plate</td>
+</tr>
+</tbody>
+</table>
+<p>The format is detected from the workbook, never chosen by the analyst.</p>
+<p>Tox6 plates are filled down columns, so consecutive injections are twelve vial
+positions apart. This needed <strong>no change to the position formula</strong> —
+<code>row_major_12</code> turns a down-column fill into that sequence on its own. Only the
+row order differs.</p>
+<p>A Tox6 plate runs one of three conditions, detected from which controls are
+present and overridable in the form:</p>
+<table>
+<thead>
+<tr>
+<th>Condition</th>
+<th>Controls</th>
+<th>Samples</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Quant</strong></td>
+<td>Cal 1–6, QC L1–L4, Neg QC, Hydro QC</td>
+<td>84</td>
+</tr>
+<tr>
+<td><strong>Qual</strong></td>
+<td>Cutoff Cal, Low QC, High QC, Neg QC, Hydro QC</td>
+<td>90</td>
+</tr>
+<tr>
+<td><strong>Combo</strong></td>
+<td>both sets</td>
+<td>80</td>
+</tr>
+</tbody>
+</table>
+<p><em>Qual</em> means <strong>qualitative analytes</strong>, not a qualification run. Those controls
+exist because the quantitative QCs do not contain those analytes; they bracket
+the samples so the qualitative analysis is covered at both ends.</p>
+<p><strong>Tox6 has no reference output yet.</strong> These are proposals awaiting the sponsor's
+sign-off, and all of them are data in two tables rather than logic:</p>
+<ol>
+<li>Block order — <code>BlockLayout</code> in <code>src/batchbuilder/generator_tox6.py</code></li>
+<li><code>_Lot</code> / <code>_Level</code> labels — <code>TOX6_CONTROLS</code> in <code>src/batchbuilder/controls.py</code></li>
+<li>The <code>.dam</code> names — <code>TO6_Str1</code> / <code>TO6_Str2</code> are placeholders, selectable from
+   a configurable dropdown</li>
+<li>What the Tox6 controls will be called in Apollo. Until that is known, controls
+   in a plate-only mockup name themselves.</li>
+</ol>
+<p><code>mockups/tox6/</code> holds generated examples of all three conditions with a covering
+note listing exactly what needs confirming. Travis can send those to the sponsor.</p>
+<p>Tox6 controls are matched to Apollo by <strong>exact name</strong>, not by substring. The
+Tox4 rule — test whether the first two characters of the <code>qcid</code> appear in the
+well name — cannot work for Tox6: <code>QC</code> appears in <code>Neg QC</code>, <code>QC L1</code>, <code>Hydro QC</code>,
+<code>Low QC</code> and <code>High QC</code>, and <code>Ca</code> appears in both <code>Cal 1</code> and <code>Cutoff Cal</code>.</p>
+<hr />
+<h2 id="where-things-live">Where things live</h2>
+<pre><code>src/batchbuilder/
+  models.py            shared data types
+  controls.py          Tox6 control vocabulary, roles, condition detection
+  positions.py         well ID -&gt; vial position, as swappable named strategies
+  readers.py           input format specs, format and fill-order detection
+  hamilton.py          workbook parsing, driven by a reader spec
+  apollo.py            read-only SQL Server access, background health probe
+  validation.py        pre-flight checks, dispatched per assay
+  generator.py         Tox4 construction   &lt;- byte-for-byte contract
+  generator_tox6.py    Tox6 construction   &lt;- proposed layout, held in tables
+  report.py            the run report written beside each batch
+  service.py           orchestration; the only thing the web layer calls
+  webapp.py            routes
+  __main__.py          launcher
+</code></pre>
+<p><code>positions.py</code> and <code>controls.py</code> are isolated deliberately: how a plate location
+becomes a vial position, and what a control is called, are the two things most
+likely to change again.</p>
+<h3 id="tests">Tests</h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_golden.py</code></td>
+<td>Byte-for-byte reproduction of three real Tox4 files</td>
+</tr>
+<tr>
+<td><code>test_hamilton.py</code></td>
+<td>Parsing, well mapping, error rows, malformed workbooks</td>
+</tr>
+<tr>
+<td><code>test_tox6.py</code></td>
+<td>Format/orientation/condition detection, Tox6 layout</td>
+</tr>
+<tr>
+<td><code>test_validation.py</code></td>
+<td>Form, control completeness, plate/Apollo reconciliation</td>
+</tr>
+<tr>
+<td><code>test_service.py</code></td>
+<td>End-to-end run, output folders, run report</td>
+</tr>
+<tr>
+<td><code>test_webapp.py</code></td>
+<td>Routes, uploads, downloads, path traversal guards</td>
+</tr>
+<tr>
+<td><code>test_launcher.py</code></td>
+<td>Startup, ports, health probe never blocking</td>
+</tr>
+<tr>
+<td><code>test_config.py</code></td>
+<td>Defaults, overrides, the shipped example file</td>
+</tr>
+<tr>
+<td><code>test_frontend.py</code></td>
+<td>Static front-end checks DOM assertions cannot see</td>
+</tr>
+</tbody>
+</table>
+<h3 id="about-the-apollo-test-fixture">About the Apollo test fixture</h3>
+<p><code>tests/fixtures/apollo_fixture.json</code> is <strong>inferred, not captured</strong> — the database
+is unreachable from a development machine, so the query results were
+reverse-engineered from three known-good output files.
+<code>build/reference_impl.py</code> is a verbatim port of the original script's logic;
+running <code>python build/validate_fixture.py</code> feeds the fixture through it and
+confirms it reproduces the shipped files exactly. That is what makes it
+trustworthy as a stand-in, even though the literal <code>qcid</code> values are a
+reconstruction.</p>
+<p>If you obtain real Apollo query output, replacing the fixture with captured data
+would strengthen this. Keep the golden comparison intact either way.</p>
+<hr />
+<h2 id="if-travis-asks-you-to-change-the-output-format">If Travis asks you to change the output format</h2>
+<p>Take it slowly and confirm the intent. The safe sequence is:</p>
+<ol>
+<li>Make the change behind a config value where possible, so it can be reverted
+   without a code change.</li>
+<li>Run the suite. The golden test <strong>will</strong> fail — that is the point of it.</li>
+<li>Show Travis the exact diff of what changed in the generated files, line by
+   line, and get explicit confirmation.</li>
+<li>Only then regenerate the expected files, in a commit that does nothing else,
+   with a message explaining what changed and who approved it.</li>
+</ol>
+<p>Never combine a golden-file regeneration with any other change.</p>
+  </article>
+
+  <h2 class="files-heading">All files <em style="color:var(--soft);
+    font-style:normal;font-size:13px;font-weight:400">(68)</em></h2>
+  <p style="color:var(--soft);font-size:14px;margin-bottom:18px">Individually
+  downloadable, so Claude Code can fetch any single file without the whole
+  archive.</p>
+    <h3>Start here <em>(4)</em></h3>
+    <ul class="files">
+      <li><a href="files/BUILD.md">BUILD.md</a><span>9 KB</span></li>
+      <li><a href="files/HANDOFF_TO_CLAUDE_CODE.md">HANDOFF_TO_CLAUDE_CODE.md</a><span>14 KB</span></li>
+      <li><a href="files/make.py">make.py</a><span>14 KB</span></li>
+      <li><a href="files/README.md">README.md</a><span>15 KB</span></li>
+    </ul>
+    <h3>Application <em>(18)</em></h3>
+    <ul class="files">
+      <li><a href="files/src/batchbuilder/__init__.py">src/batchbuilder/__init__.py</a><span>119 B</span></li>
+      <li><a href="files/src/batchbuilder/__main__.py">src/batchbuilder/__main__.py</a><span>7 KB</span></li>
+      <li><a href="files/src/batchbuilder/apollo.py">src/batchbuilder/apollo.py</a><span>9 KB</span></li>
+      <li><a href="files/src/batchbuilder/config.py">src/batchbuilder/config.py</a><span>8 KB</span></li>
+      <li><a href="files/src/batchbuilder/controls.py">src/batchbuilder/controls.py</a><span>6 KB</span></li>
+      <li><a href="files/src/batchbuilder/generator.py">src/batchbuilder/generator.py</a><span>15 KB</span></li>
+      <li><a href="files/src/batchbuilder/generator_tox6.py">src/batchbuilder/generator_tox6.py</a><span>9 KB</span></li>
+      <li><a href="files/src/batchbuilder/hamilton.py">src/batchbuilder/hamilton.py</a><span>7 KB</span></li>
+      <li><a href="files/src/batchbuilder/models.py">src/batchbuilder/models.py</a><span>7 KB</span></li>
+      <li><a href="files/src/batchbuilder/positions.py">src/batchbuilder/positions.py</a><span>2 KB</span></li>
+      <li><a href="files/src/batchbuilder/readers.py">src/batchbuilder/readers.py</a><span>4 KB</span></li>
+      <li><a href="files/src/batchbuilder/report.py">src/batchbuilder/report.py</a><span>3 KB</span></li>
+      <li><a href="files/src/batchbuilder/service.py">src/batchbuilder/service.py</a><span>9 KB</span></li>
+      <li><a href="files/src/batchbuilder/static/app.css">src/batchbuilder/static/app.css</a><span>10 KB</span></li>
+      <li><a href="files/src/batchbuilder/static/app.js">src/batchbuilder/static/app.js</a><span>16 KB</span></li>
+      <li><a href="files/src/batchbuilder/templates/index.html">src/batchbuilder/templates/index.html</a><span>7 KB</span></li>
+      <li><a href="files/src/batchbuilder/validation.py">src/batchbuilder/validation.py</a><span>11 KB</span></li>
+      <li><a href="files/src/batchbuilder/webapp.py">src/batchbuilder/webapp.py</a><span>11 KB</span></li>
+    </ul>
+    <h3>Tests <em>(18)</em></h3>
+    <ul class="files">
+      <li><a href="files/tests/conftest.py">tests/conftest.py</a><span>1 KB</span></li>
+      <li><a href="files/tests/fixtures/apollo_fixture.json">tests/fixtures/apollo_fixture.json</a><span>5 KB</span></li>
+      <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Combo.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Combo.xls</a><span>30 KB</span></li>
+      <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Qual.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Qual.xls</a><span>30 KB</span></li>
+      <li><a href="files/tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Quant.xls">tests/fixtures/Destination_Plate_Barcode05_7_Tox6 Quant.xls</a><span>30 KB</span></li>
+      <li><a href="files/tests/fixtures/expected/abc1234_500101_500102_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500101_500102_619_TO4_Str1_LC_13.txt</a><span>19 KB</span></li>
+      <li><a href="files/tests/fixtures/expected/abc1234_500101_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500101_619_TO4_Str1_LC_13.txt</a><span>9 KB</span></li>
+      <li><a href="files/tests/fixtures/expected/abc1234_500102_619_TO4_Str1_LC_13.txt">tests/fixtures/expected/abc1234_500102_619_TO4_Str1_LC_13.txt</a><span>13 KB</span></li>
+      <li><a href="files/tests/fixtures/tox4_sample_plate.xls">tests/fixtures/tox4_sample_plate.xls</a><span>182 KB</span></li>
+      <li><a href="files/tests/test_config.py">tests/test_config.py</a><span>3 KB</span></li>
+      <li><a href="files/tests/test_frontend.py">tests/test_frontend.py</a><span>7 KB</span></li>
+      <li><a href="files/tests/test_golden.py">tests/test_golden.py</a><span>3 KB</span></li>
+      <li><a href="files/tests/test_hamilton.py">tests/test_hamilton.py</a><span>7 KB</span></li>
+      <li><a href="files/tests/test_launcher.py">tests/test_launcher.py</a><span>5 KB</span></li>
+      <li><a href="files/tests/test_service.py">tests/test_service.py</a><span>5 KB</span></li>
+      <li><a href="files/tests/test_tox6.py">tests/test_tox6.py</a><span>15 KB</span></li>
+      <li><a href="files/tests/test_validation.py">tests/test_validation.py</a><span>5 KB</span></li>
+      <li><a href="files/tests/test_webapp.py">tests/test_webapp.py</a><span>15 KB</span></li>
+    </ul>
+    <h3>Packaging <em>(7)</em></h3>
+    <ul class="files">
+      <li><a href="files/build/batchbuilder.spec">build/batchbuilder.spec</a><span>2 KB</span></li>
+      <li><a href="files/build/build.ps1">build/build.ps1</a><span>6 KB</span></li>
+      <li><a href="files/build/derive_fixture.py">build/derive_fixture.py</a><span>3 KB</span></li>
+      <li><a href="files/build/entry.py">build/entry.py</a><span>1 KB</span></li>
+      <li><a href="files/build/make_email_zip.py">build/make_email_zip.py</a><span>6 KB</span></li>
+      <li><a href="files/build/reference_impl.py">build/reference_impl.py</a><span>13 KB</span></li>
+      <li><a href="files/build/validate_fixture.py">build/validate_fixture.py</a><span>2 KB</span></li>
+    </ul>
+    <h3>Reference and examples <em>(6)</em></h3>
+    <ul class="files">
+      <li><a href="files/mockups/tox6/Barcode05_Combo_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Combo_819_TO6_Str1_LC_13.txt</a><span>19 KB</span></li>
+      <li><a href="files/mockups/tox6/Barcode05_Qual_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Qual_819_TO6_Str1_LC_13.txt</a><span>18 KB</span></li>
+      <li><a href="files/mockups/tox6/Barcode05_Quant_819_TO6_Str1_LC_13.txt">mockups/tox6/Barcode05_Quant_819_TO6_Str1_LC_13.txt</a><span>19 KB</span></li>
+      <li><a href="files/mockups/tox6/README.md">mockups/tox6/README.md</a><span>3 KB</span></li>
+      <li><a href="files/reference/bb_v1.py">reference/bb_v1.py</a><span>34 KB</span></li>
+      <li><a href="files/vendor/README.md">vendor/README.md</a><span>1 KB</span></li>
+    </ul>
+    <h3>Project files <em>(15)</em></h3>
+    <ul class="files">
+      <li><a href="files/.gitignore">.gitignore</a><span>396 B</span></li>
+      <li><a href="files/.vscode/extensions.json">.vscode/extensions.json</a><span>225 B</span></li>
+      <li><a href="files/.vscode/launch.json">.vscode/launch.json</a><span>2 KB</span></li>
+      <li><a href="files/.vscode/settings.json">.vscode/settings.json</a><span>2 KB</span></li>
+      <li><a href="files/.vscode/tasks.json">.vscode/tasks.json</a><span>3 KB</span></li>
+      <li><a href="files/batchbuilder.example.json">batchbuilder.example.json</a><span>2 KB</span></li>
+      <li><a href="files/build.bat">build.bat</a><span>424 B</span></li>
+      <li><a href="files/CHANGELOG.md">CHANGELOG.md</a><span>12 KB</span></li>
+      <li><a href="files/pytest.ini">pytest.ini</a><span>91 B</span></li>
+      <li><a href="files/requirements-dev.txt">requirements-dev.txt</a><span>89 B</span></li>
+      <li><a href="files/requirements.txt">requirements.txt</a><span>65 B</span></li>
+      <li><a href="files/run.bat">run.bat</a><span>471 B</span></li>
+      <li><a href="files/run.ps1">run.ps1</a><span>2 KB</span></li>
+      <li><a href="files/setup.bat">setup.bat</a><span>562 B</span></li>
+      <li><a href="files/setup.ps1">setup.ps1</a><span>7 KB</span></li>
+    </ul>
 
   <footer>
-    Internal working files. Sanitised for transfer &mdash; supply real
-    connection details locally.
+    Internal working files. Sanitised for transfer &mdash; credentials, server
+    names, batch numbers and specimen identifiers are synthetic placeholders.
+    Supply real values locally in <code>batchbuilder.json</code>.
   </footer>
 
 </div>
